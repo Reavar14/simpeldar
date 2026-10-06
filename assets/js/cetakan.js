@@ -14,6 +14,14 @@ $(function () {
         };
     }
 
+    function getRekapValues() {
+        return {
+            tgl_awal_rekap: $('#cetakanRekapTglAwal').val() || '',
+            tgl_akhir_rekap: $('#cetakanRekapTglAkhir').val() || '',
+            analis_rekap: $('#cetakanRekapAnalis').val() || ''
+        };
+    }
+
     function submitFilter() {
         var params = new URLSearchParams();
         var vals = getFilterValues();
@@ -24,10 +32,20 @@ $(function () {
         window.location.href = baseUrl + 'cetakan' + (qs ? '?' + qs : '');
     }
 
-    $('#cetakanAnalis, #cetakanDataEntry, #cetakanDokter, #cetakanStatus').on('change', submitFilter);
+    function submitFilterRekap() {
+        var params = new URLSearchParams();
+        var vals = getRekapValues();
+        Object.keys(vals).forEach(function (key) {
+            if (vals[key]) params.append(key, vals[key]);
+        });
+        var qs = params.toString();
+        window.location.href = baseUrl + 'cetakan' + (qs ? '?' + qs : '');
+    }
 
-    $('#btnPrintLaporanLengkap').on('click', function (e) {
-        e.preventDefault();
+    $('#cetakanAnalis, #cetakanDataEntry, #cetakanDokter, #cetakanStatus').on('change', submitFilter);
+    $('#cetakanRekapAnalis').on('change', submitFilterRekap);
+
+    function openLaporanLengkap() {
         var vals = getFilterValues();
         if (!vals.tgl_awal || !vals.tgl_akhir) {
             SwalHelper.error('Gagal', 'Tanggal awal dan akhir wajib diisi.');
@@ -39,16 +57,26 @@ $(function () {
             (vals.dokter_konsul ? '&DOKTERKONSUL=' + vals.dokter_konsul : '') +
             (vals.statusp ? '&STATUSP=' + vals.statusp : '');
         window.open(baseUrl + 'RequestController/print_laporan_lengkap' + qs, '_blank');
-    });
+    }
 
-    $('#btnPrintRekapAnalis').on('click', function (e) {
-        e.preventDefault();
-        var vals = getFilterValues();
-        if (!vals.tgl_awal || !vals.tgl_akhir) {
+    function openRekapAnalis() {
+        var vals = getRekapValues();
+        if (!vals.tgl_awal_rekap || !vals.tgl_akhir_rekap) {
             SwalHelper.error('Gagal', 'Tanggal awal dan akhir wajib diisi.');
             return;
         }
-        var qs = '?tgl_awal_rekap=' + vals.tgl_awal + '&tgl_akhir_rekap=' + vals.tgl_akhir;
+        var qs = '?tgl_awal_rekap=' + vals.tgl_awal_rekap + '&tgl_akhir_rekap=' + vals.tgl_akhir_rekap +
+            (vals.analis_rekap ? '&ANALIS=' + vals.analis_rekap : '');
         window.open(baseUrl + 'RequestController/print_rekap_analis' + qs, '_blank');
+    }
+
+    $(document).on('click', '#btnPrintLaporanLengkap, #btnExcelLaporanLengkap', function (e) {
+        e.preventDefault();
+        openLaporanLengkap();
+    });
+
+    $(document).on('click', '#btnPrintRekapAnalis, #btnExcelRekapAnalis', function (e) {
+        e.preventDefault();
+        openRekapAnalis();
     });
 });

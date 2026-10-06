@@ -24,12 +24,15 @@ class Cetakan extends Admin_Controller {
     {
         // Filter values (sticky via GET)
         $data['filter'] = array(
-            'tgl_awal'      => $this->input->get('tgl_awal'),
-            'tgl_akhir'     => $this->input->get('tgl_akhir'),
-            'analis'        => $this->input->get('analis'),
-            'data_entry'    => $this->input->get('data_entry'),
-            'dokter_konsul' => $this->input->get('dokter_konsul'),
-            'statusp'       => $this->input->get('statusp'),
+            'tgl_awal'        => $this->input->get('tgl_awal'),
+            'tgl_akhir'       => $this->input->get('tgl_akhir'),
+            'analis'          => $this->input->get('analis'),
+            'data_entry'      => $this->input->get('data_entry'),
+            'dokter_konsul'   => $this->input->get('dokter_konsul'),
+            'statusp'         => $this->input->get('statusp'),
+            'tgl_awal_rekap'  => $this->input->get('tgl_awal_rekap'),
+            'tgl_akhir_rekap' => $this->input->get('tgl_akhir_rekap'),
+            'analis_rekap'    => $this->input->get('analis_rekap'),
         );
 
         // Dropdown options

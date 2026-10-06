@@ -514,6 +514,7 @@ class RequestController extends MY_Controller {
         // Ambil parameter GET (nama param sesuai native)
         $tgl_awal  = $this->input->get('tgl_awal_rekap');
         $tgl_akhir = $this->input->get('tgl_akhir_rekap');
+        $analis    = $this->input->get('ANALIS');
 
         // Default tanggal: 1 bulan terakhir jika kosong
         if (empty($tgl_awal)) {
@@ -539,6 +540,7 @@ class RequestController extends MY_Controller {
         $data['filter'] = array(
             'tgl_awal'  => $tgl_awal,
             'tgl_akhir' => $tgl_akhir,
+            'analis'    => $analis,
         );
 
         $this->load->view('templates/header');
