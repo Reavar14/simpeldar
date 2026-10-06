@@ -2,12 +2,10 @@
 
 <div class="page-header">
     <div>
-        <h1 class="page-title"><i class="fas fa-file-invoice-dollar text-primary me-2"></i>Billing Kantong Darah</h1>
-        <p class="page-subtitle">Daftar permintaan darah beserta status billing kantong</p>
+        <h1 class="page-title"><i class="fas fa-file-invoice-dollar text-primary me-2"></i>Jumlah Billing</h1>
     </div>
 </div>
 
-<?php $this->load->view('billing/components/filter_card'); ?>
 <?php $this->load->view('billing/components/billing_table'); ?>
 
 <script>

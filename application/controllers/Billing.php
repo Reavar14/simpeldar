@@ -11,15 +11,7 @@ class Billing extends Admin_Controller {
 
     public function index()
     {
-        $data['filter'] = array(
-            'tgl_awal'      => $this->input->get('tgl_awal'),
-            'tgl_akhir'     => $this->input->get('tgl_akhir'),
-            'ruangan'       => $this->input->get('ruangan'),
-            'status_billing'=> $this->input->get('status_billing'),
-        );
-
-        $data['ruangan_list']       = $this->Billing_model->get_ruangan();
-        $data['status_list']        = $this->Billing_model->get_status_billing();
+        $data = array();
 
         $this->load->view('templates/header');
         $this->load->view('billing/index', $data);
@@ -57,18 +49,32 @@ class Billing extends Admin_Controller {
         $data = array();
         $no = $start + 1;
 
+        // Group per pasien (NO MR): total billing digabung
+        $grouped = array();
         foreach ($list as $item) {
+            $mr = $item['mr'];
+            $jumlah = (int)$item['total_billing'];
+
+            if (!isset($grouped[$mr])) {
+                // TGL BILLING diambil dari record terbaru (list sudah terurut tgl DESC)
+                $grouped[$mr] = array(
+                    'mr'     => $item['mr'],
+                    'nama'   => $item['nama'],
+                    'tgl'    => $item['tgl_minta'],
+                    'jumlah' => $jumlah,
+                );
+            } else {
+                $grouped[$mr]['jumlah'] += $jumlah;
+            }
+        }
+
+        foreach ($grouped as $g) {
             $data[] = array(
                 $no++,
-                $item['no_permintaan'],
-                $item['mr'],
-                $item['nama'],
-                $item['tgl_minta'],
-                $item['ruangan'],
-                $item['jenis_darah'],
-                (int)$item['total_kantong'],
-                $item['status_billing'],
-                $item['no_permintaan'],
+                $g['mr'],
+                $g['nama'],
+                $g['tgl'],
+                $g['jumlah'],
             );
         }
 
