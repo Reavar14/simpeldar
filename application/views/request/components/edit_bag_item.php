@@ -1,5 +1,8 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 $i = isset($i) ? (int)$i : 1;
+$is_limited = isset($is_limited) ? (bool)$is_limited : false;
+$ro  = $is_limited ? ' readonly' : '';
+$dis = $is_limited ? ' disabled' : '';
 
 $serah_key  = ($i === 1) ? 'PETUGAS_SERAH'  : 'PETUGAS_SERAH_' . $i;
 $terima_key = ($i === 1) ? 'PETUGAS_TERIMA' : 'PETUGAS_TERIMA_' . $i;
@@ -26,7 +29,7 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            data-original="<?php echo htmlspecialchars($d['no_kantong_' . $i]); ?>"
                            value="<?php echo htmlspecialchars($d['no_kantong_' . $i]); ?>"
                            placeholder="Nomor Kantong <?php echo $i; ?>"
-                           autocomplete="off">
+                           autocomplete="off"<?php echo $ro; ?>>
                 </div>
 
                 <div class="col-md-6">
@@ -49,7 +52,7 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            id="cc<?php echo $i; ?>edit"
                            class="form-control form-control-sm text-center"
                            value="<?php echo htmlspecialchars($d['volume_' . $i]); ?>"
-                           placeholder="Volume">
+                           placeholder="Volume"<?php echo $ro; ?>>
                 </div>
 
                 <div class="col-12">
@@ -59,12 +62,12 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            id="exp<?php echo $i; ?>edit"
                            class="form-control form-control-sm"
                            value="<?php echo htmlspecialchars($d['exp_' . $i]); ?>"
-                           placeholder="Expired Date">
+                           placeholder="Expired Date"<?php echo $ro; ?>>
                 </div>
 
                 <div class="col-md-6">
                     <label class="form-label" for="myr_<?php echo $i; ?>">Mayor</label>
-                    <select name="myr_<?php echo $i; ?>" id="myr_<?php echo $i; ?>" class="form-select form-select-sm select2" data-placeholder="MAYOR">
+                    <select name="myr_<?php echo $i; ?>" id="myr_<?php echo $i; ?>" class="form-select form-select-sm select2" data-placeholder="MAYOR"<?php echo $dis; ?>>
                         <option value="">&nbsp;</option>
                         <?php foreach ($mayor as $b): ?>
                             <option value="<?php echo $b['ID']; ?>"<?php if ($d['myr_' . $i] == $b['ID']) echo ' selected'; ?>>
@@ -75,7 +78,7 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                 </div>
                 <div class="col-md-6">
                     <label class="form-label" for="mnr_<?php echo $i; ?>">Minor</label>
-                    <select name="mnr_<?php echo $i; ?>" id="mnr_<?php echo $i; ?>" class="form-select form-select-sm select2" data-placeholder="MINOR">
+                    <select name="mnr_<?php echo $i; ?>" id="mnr_<?php echo $i; ?>" class="form-select form-select-sm select2" data-placeholder="MINOR"<?php echo $dis; ?>>
                         <option value="">&nbsp;</option>
                         <?php foreach ($minor as $b): ?>
                             <option value="<?php echo $b['ID']; ?>"<?php if ($d['mnr_' . $i] == $b['ID']) echo ' selected'; ?>>
@@ -92,7 +95,7 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            id="tglkantong<?php echo $i; ?>"
                            class="form-control form-control-sm datetimepicker"
                            value="<?php echo htmlspecialchars($d['tglkantong' . $i]); ?>"
-                           placeholder="Tanggal Input Kantong <?php echo $i; ?>">
+                           placeholder="Tanggal Input Kantong <?php echo $i; ?>"<?php echo $ro; ?>>
                 </div>
 
                 <div class="col-12">
@@ -112,7 +115,7 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            id="petugas_serah_edit_<?php echo $i; ?>"
                            class="form-control form-control-sm"
                            value="<?php echo htmlspecialchars($d[$serah_key]); ?>"
-                           placeholder="Petugas Yang Menyerahkan">
+                           placeholder="Petugas Yang Menyerahkan"<?php echo $ro; ?>>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label" for="petugas_terima_edit_<?php echo $i; ?>">Petugas Terima</label>
@@ -121,7 +124,7 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            id="petugas_terima_edit_<?php echo $i; ?>"
                            class="form-control form-control-sm"
                            value="<?php echo htmlspecialchars($d[$terima_key]); ?>"
-                           placeholder="Petugas Yang Menerima">
+                           placeholder="Petugas Yang Menerima"<?php echo $ro; ?>>
                 </div>
             </div>
         </div>

@@ -320,13 +320,6 @@
             markValid('#tgl_diperlukan');
         }
 
-        if (!($('#ruangan').val() || '').trim()) {
-            missing.push('Ruangan');
-            markInvalid('#ruangan');
-        } else {
-            markValid('#ruangan');
-        }
-
         if (!($('#status').val() || '').trim()) {
             missing.push('Status');
             markInvalid('#status');
@@ -334,6 +327,8 @@
             markValid('#status');
         }
 
+        // Ruangan tidak wajib - tidak ada validasi required
+        
         return missing;
     }
 

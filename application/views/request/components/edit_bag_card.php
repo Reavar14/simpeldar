@@ -1,4 +1,6 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+$is_limited = isset($is_limited) ? (bool)$is_limited : false;
+?>
 
 <!-- ============================================================
      CARD 4 - DATA KANTONG DARAH (1-12)
@@ -15,13 +17,13 @@
     <div class="card-body">
         <!-- Kantong 1-3 always visible -->
         <div class="row g-3" id="kantongUtama">
-            <?php for ($i = 1; $i <= 3; $i++) { $this->load->view('request/components/edit_bag_item', array('i' => $i)); } ?>
+            <?php for ($i = 1; $i <= 3; $i++) { $this->load->view('request/components/edit_bag_item', array('i' => $i, 'is_limited' => $is_limited)); } ?>
         </div>
 
         <!-- Kantong 4-12 collapsible -->
         <div class="collapse" id="kantongLainnya">
             <div class="row g-3">
-                <?php for ($i = 4; $i <= 12; $i++) { $this->load->view('request/components/edit_bag_item', array('i' => $i)); } ?>
+                <?php for ($i = 4; $i <= 12; $i++) { $this->load->view('request/components/edit_bag_item', array('i' => $i, 'is_limited' => $is_limited)); } ?>
             </div>
         </div>
 

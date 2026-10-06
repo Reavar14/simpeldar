@@ -141,7 +141,7 @@ if ($level == '1') {
         $cells[] = '<td>' . htmlspecialchars((string)$r['tgl_minta']) . '</td>';
         $cells[] = '<td>' . htmlspecialchars((string)$r['ruangan']) . '</td>';
         $cells[] = '<td>' . htmlspecialchars((string)$r['alasan']) . '</td>';
-        $cells[] = '<td>' . htmlspecialchars((string)$r['TUJUAN']) . '</td>';
+        $cells[] = '<td>' . (!empty($r['TUJUAN']) ? htmlspecialchars($r['TUJUAN']) : '') . '</td>';
         $cells[] = '<td class="text-center">' . dash_goldar_badge($r['goldar']) . '</td>';
         $cells[] = '<td class="text-center">' . htmlspecialchars((string)$r['tgl_diperlukan']) . '</td>';
         $cells[] = '<td class="text-center small">' . $r['jenis_darah'] . '</td>';

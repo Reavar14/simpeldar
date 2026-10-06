@@ -263,4 +263,5 @@ window.FORM_DARAH = {
 };
 </script>
 
-<script src="<?php echo base_url('assets/js/form-darah.js'); ?>"></script>
+    <!-- Form logic (dipisah dari view) -->
+    <script src="<?php echo base_url('assets/js/form-darah.js'); ?>?v=20241006"></script>

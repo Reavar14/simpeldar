@@ -46,7 +46,7 @@ class Request_model extends CI_Model {
             DATE_FORMAT(pd.tgl_diperlukan,'%d-%m-%Y') AS tgl_diperlukan,
 
             pd.alasan,
-            (SELECT tuj.variabel FROM darah.variabel tuj WHERE tuj.id_variabel = pd.tujuan AND tuj.id_referensi = 1948) AS tujuan,
+            (SELECT NULLIF(tuj.variabel, 'Tidak Ditentukan') FROM darah.variabel tuj WHERE tuj.id_variabel = pd.tujuan AND tuj.id_referensi = 1948) AS tujuan,
             (SELECT rstatus.DESKRIPSI FROM darah.referensi rstatus WHERE rstatus.ID = pd.status AND rstatus.JENIS = 3) AS status_proses,
             (SELECT r.DESKRIPSI FROM darah.ruangan r WHERE r.ID = pd.ruangan AND r.JENIS = 5) AS ruangan,
             pd.trombosit, pd.kadar_hb,
@@ -168,7 +168,7 @@ class Request_model extends CI_Model {
             pd.no_kantong_7, pd.no_kantong_8, pd.no_kantong_9, pd.no_kantong_10, pd.no_kantong_11, pd.no_kantong_12,
             st.status AS status_terima, pd.status AS status_pesan,
             DATE_FORMAT(st.tanggal_terima, '%d-%m-%Y %H:%i:%s') tanggal_terima, pterima.NAMA petugas_terima,
-            tuj.variabel AS TUJUAN
+            NULLIF(tuj.variabel, 'Tidak Ditentukan') AS TUJUAN
             FROM darah.pesan_darah pd
             LEFT JOIN darah.referensi rgd ON pd.goldarah=rgd.ID AND rgd.JENIS=1
             LEFT JOIN darah.referensi rstatus ON pd.`status`=rstatus.ID AND rstatus.JENIS=3
@@ -258,7 +258,7 @@ class Request_model extends CI_Model {
             TIMESTAMPDIFF(YEAR, pd.tgl_lahir, CURDATE()) umur,
             DATE_FORMAT(st.tanggal_terima, '%d-%m-%Y %H:%i:%s') tanggal_terima,
             ru.DESKRIPSI ruangan, pterima.NAMA PETUGAS_TERIMA, uc.NAMA NAMA_CREATE,
-            pd.alasan, tuj.variabel TUJUAN,
+            pd.alasan, NULLIF(tuj.variabel, 'Tidak Ditentukan') TUJUAN,
             rstatus.DESKRIPSI status_proses,
             CONCAT(IF(p.GELAR_DEPAN='' OR p.GELAR_DEPAN IS NULL,'',CONCAT(p.GELAR_DEPAN,'. ')),UPPER(p.NAMA),IF(p.GELAR_BELAKANG='' OR p.GELAR_BELAKANG IS NULL,'',CONCAT(', ',p.GELAR_BELAKANG))) nama_dokter
             FROM darah.pesan_darah pd
@@ -330,7 +330,7 @@ class Request_model extends CI_Model {
             dp.nama_perawat,
             CONCAT(IF(p.GELAR_DEPAN='' OR p.GELAR_DEPAN IS NULL,'',CONCAT(p.GELAR_DEPAN,'. ')),UPPER(p.NAMA),IF(p.GELAR_BELAKANG='' OR p.GELAR_BELAKANG IS NULL,'',CONCAT(', ',p.GELAR_BELAKANG))) nama_dokter,
             r.DESKRIPSI RUANGAN, pd.pengambil_darah pengambildarah,
-            tuj.variabel TUJUAN,
+            NULLIF(tuj.variabel, 'Tidak Ditentukan') TUJUAN,
             us.NAMA DE, ue.NAMA NAMA_EDIT,
             pd.auto_kontrol,
             (SELECT rak.DESKRIPSI FROM darah.referensi rak WHERE rak.ID=pd.auto_kontrol AND rak.JENIS=7) autkon,
@@ -524,7 +524,7 @@ SELECT
     IFNULL(MAX(cb10.status), 0) AS cek_billing_10,
     IFNULL(MAX(cb11.status), 0) AS cek_billing_11,
     IFNULL(MAX(cb12.status), 0) AS cek_billing_12,
-    rgd_tujuan.variabel AS TUJUAN, pd.tujuan AS ID_TUJUAN
+    NULLIF(rgd_tujuan.variabel, 'Tidak Ditentukan') AS TUJUAN, pd.tujuan AS ID_TUJUAN
 FROM
     darah.pesan_darah pd
 LEFT JOIN darah.referensi rgd ON pd.goldarah = rgd.ID AND rgd.JENIS = 1

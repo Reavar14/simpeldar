@@ -469,7 +469,7 @@ class Darah extends MY_Controller {
             $row[] = $item['tgl_minta'];
             $row[] = $item['ruangan'];
             $row[] = $item['alasan'];
-            $row[] = $item['tujuan'];
+            $row[] = !empty($item['tujuan']) ? $item['tujuan'] : '';
             $row[] = $item['goldar'];
             $row[] = $item['tgl_diperlukan'];
             $row[] = $item['jenis_darah'];

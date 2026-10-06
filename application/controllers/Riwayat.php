@@ -72,7 +72,7 @@ class Riwayat extends Admin_Controller {
             $row[] = $item['nama'];
             $row[] = $item['tgl_minta'];
             $row[] = $item['ruangan'];
-            $row[] = $item['tujuan'];
+            $row[] = !empty($item['tujuan']) ? $item['tujuan'] : '';
             $row[] = $item['goldar'];
             $row[] = $item['jenis_darah'];
             $row[] = $item['status_proses'];
