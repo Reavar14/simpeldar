@@ -160,8 +160,11 @@
 
             /* Tampilkan alert jika status darah sebelumnya masih ada */
             var notif = data.statusdarah;
-            var adaMasalah = (notif !== null && notif !== undefined && String(notif) !== '8' && String(notif) !== '');
-            $('#alertStatusDarah').toggleClass('d-none', !adaMasalah);
+            if (notif != 8 && notif != null) {
+                $('#alertStatusDarah').removeClass('d-none');
+            } else {
+                $('#alertStatusDarah').addClass('d-none');
+            }
 
             /* Re-cek semua kantong setelah goldar pasien berubah */
             for (var i = 1; i <= 12; i++) {

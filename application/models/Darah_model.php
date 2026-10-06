@@ -278,6 +278,10 @@ class Darah_model extends CI_Model {
         
         return $nextNoTransaksi;
     }
+    public function get_status_darah_terakhir($mr)
+    {
+        return $this->db->select('status')->from('pesan_darah')->where('mr', $mr)->order_by('tgl_creat', 'DESC')->limit(1)->get()->row('status');
+    }
 
     /**
      * Insert pesan_darah
