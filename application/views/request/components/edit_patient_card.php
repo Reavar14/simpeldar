@@ -1,4 +1,8 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+$is_limited = isset($is_limited) ? (bool)$is_limited : false;
+$ro  = $is_limited ? ' readonly' : '';
+$dis = $is_limited ? ' disabled' : '';
+?>
 
 <!-- ============================================================
      CARD 1 - DATA PASIEN & GOLONGAN DARAH
@@ -15,7 +19,7 @@
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="tgl_minta">Tanggal Permintaan</label>
-                <input type="text" name="tgl_minta" id="tgl_minta" class="form-control datetimepicker" value="<?php echo htmlspecialchars($d['tgl_minta']); ?>" placeholder="Tanggal Permintaan">
+                <input type="text" name="tgl_minta" id="tgl_minta" class="form-control datetimepicker" value="<?php echo htmlspecialchars($d['tgl_minta']); ?>" placeholder="Tanggal Permintaan"<?php echo $ro; ?>>
             </div>
 
             <div class="col-md-4">
@@ -52,7 +56,7 @@
                     }
                 }
                 ?>
-                <select name="goldarah" id="selectgoldarah" class="form-select select2 idgoldar" data-placeholder="Pilih Golongan Darah">
+                <select name="goldarah" id="selectgoldarah" class="form-select select2 idgoldar" data-placeholder="Pilih Golongan Darah"<?php echo $dis; ?>>
                     <option value="">&nbsp;</option>
                     <?php foreach ($goldarah as $b): ?>
                         <option value="<?php echo $b['ID']; ?>"<?php if ((string)$b['ID'] === $selectedGolId) echo ' selected'; ?>>

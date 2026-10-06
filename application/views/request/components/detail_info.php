@@ -20,7 +20,7 @@
             <div class="col-md-6"><strong>Kadar HB</strong><br><?php echo htmlspecialchars($d['kadar_hb'] ?? '-'); ?></div>
             <div class="col-md-6"><strong>Alasan</strong><br><?php echo $alasan; ?></div>
             <div class="col-md-6"><strong>Trombosit</strong><br><?php echo $trombosit; ?></div>
-            <div class="col-md-6"><strong>Tujuan</strong><br><?php echo htmlspecialchars($d['TUJUAN'] ?? '-'); ?></div>
+            <div class="col-md-6"><strong>Tujuan</strong><br><?php echo !empty($d['TUJUAN']) ? htmlspecialchars($d['TUJUAN']) : ''; ?></div>
         </div>
     </div>
 </div>

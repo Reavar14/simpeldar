@@ -220,6 +220,6 @@ window.RAWAT_INAP_CONFIG = {
     detailUrl: "<?php echo base_url('index.php/requestcontroller/detail/'); ?>",
     bonUrl: "<?php echo base_url('index.php/requestcontroller/print_bon/'); ?>",
     hasilUrl: "<?php echo base_url('index.php/requestcontroller/print_hasil_pemeriksaan/'); ?>",
-    editUrl: "<?php echo base_url('index.php/requestcontroller/edit/'); ?>"
+    editUrl: "<?php echo base_url('index.php/requestcontroller/edit_rawat_inap/'); ?>"
 };
 </script>

@@ -349,7 +349,7 @@ class Darah_model extends CI_Model {
             DATE_FORMAT(pd.tgl_diperlukan,'%d-%m-%Y') AS tgl_diperlukan,
 
             pd.alasan,
-            tuj.variabel AS tujuan,
+            NULLIF(tuj.variabel, 'Tidak Ditentukan') AS tujuan,
             rstatus.DESKRIPSI AS status_proses,
             r.DESKRIPSI AS ruangan,
             pd.trombosit, pd.kadar_hb,

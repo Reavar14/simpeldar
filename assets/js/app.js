@@ -417,14 +417,14 @@
 
         /* datepicker biasa */
         $('.datepicker, [data-flatpickr="date"]').each(function () {
-            if (!this._flatpickr) {
+            if (!this._flatpickr && !$(this).is('[readonly]')) {
                 flatpickr(this, { enableTime: false });
             }
         });
 
         /* datetimepicker */
         $('.datetimepicker, [data-flatpickr="datetime"]').each(function () {
-            if (!this._flatpickr) {
+            if (!this._flatpickr && !$(this).is('[readonly]')) {
                 flatpickr(this, {
                     enableTime: true,
                     dateFormat: 'Y-m-d H:i:S',

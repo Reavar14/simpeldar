@@ -45,7 +45,7 @@ class Riwayat_model extends CI_Model {
             pd.nama,
             DATE_FORMAT(pd.tgl_minta, '%d-%m-%Y') AS tgl_minta,
             r.DESKRIPSI AS ruangan,
-            tuj.variabel AS tujuan,
+            NULLIF(tuj.variabel, 'Tidak Ditentukan') AS tujuan,
             rgd.DESKRIPSI AS goldar,
             jd.nama_jenis AS jenis_darah,
             rstatus.DESKRIPSI AS status_proses

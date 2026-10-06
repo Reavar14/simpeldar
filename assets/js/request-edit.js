@@ -124,6 +124,11 @@
                 }
 
                 cekGoldarKantong(i);
+
+                /* Mode limited_edit: golongan darah kantong wajib tetap readonly */
+                if (cfg.editMode === 'limited_edit') {
+                    $goldar.prop('readonly', true);
+                }
             }
         });
     }
@@ -303,6 +308,33 @@
         }, 500);
     }
 
+    function disableFlatpickrForReadonly() {
+        if (cfg.editMode !== 'limited_edit') {
+            return;
+        }
+
+        var readonlyFields = ['#tgl_minta'];
+        for (var i = 1; i <= 12; i++) {
+            readonlyFields.push('#tglkantong' + i);
+        }
+
+        readonlyFields.forEach(function (selector) {
+            var $el = $(selector);
+            if ($el.length && $el.is('[readonly]')) {
+                if ($el[0]._flatpickr) {
+                    $el[0]._flatpickr.destroy();
+                    $el.removeData('flatpickr');
+                }
+                $el.prop('readonly', true);
+                $el.on('click.readonly focus.readonly', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                });
+            }
+        });
+    }
+
     $(function () {
         console.log('[request-edit.js] DOM ready, initializing');
 
@@ -318,6 +350,9 @@
         bindKantongLookup();
         bindFormSubmit();
         initFilledKantong();
+
+        disableFlatpickrForReadonly();
+
         console.log('[request-edit.js] Initialization complete. Initial goldarah:', initialGolId);
     });
 })(jQuery);
