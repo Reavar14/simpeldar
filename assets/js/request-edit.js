@@ -33,6 +33,9 @@
             return (className.match(/(^|\s)text-\S+/g) || []).join(' ');
         });
         $span.removeClass('goldar-small');
+        /* Bersihkan style inline dari render awal PHP agar class warna/ukuran berlaku */
+        $span.css('color', '');
+        $span.css('font-size', '');
 
         var data = golonganDarahMap[golId];
         if (!data) {
@@ -146,37 +149,36 @@
         });
     }
 
-    var goldarProgrammatic = false;
     var lastGolId = '';
-    var updatingSelect2 = false;
+    var goldarApplying = false;
 
-    function syncGoldarahValues(golId) {
-        golId = golId ? String(golId) : '';
+    function getGoldarSelect() {
         var $select = $('#selectgoldarah');
         if (!$select.length) {
             $select = $('select[name="goldarah"]');
         }
+        return $select;
+    }
 
-        // 1. Value asli select berubah
-        if ($select.length && $select.val() !== golId) {
-            $select.val(golId);
-        }
+    /* Terapkan nilai golongan darah: select + Select2 + preview + hidden + cek kantong */
+    function applyGoldarah(golId) {
+        golId = golId ? String(golId) : '';
 
-        // 2. Select2 refresh
+        var $select = getGoldarSelect();
         if ($select.length) {
-            updatingSelect2 = true;
+            goldarApplying = true;
+            if ($select.val() !== golId) {
+                $select.val(golId);
+            }
+            /* Refresh Select2 agar tampilan dropdown ikut nilai terbaru */
             $select.trigger('change.select2');
-            updatingSelect2 = false;
+            goldarApplying = false;
         }
 
-        // 3. Preview ikut update
         updateGolonganDarahSpan(golId);
-
-        // 4. Sinkronkan hidden input & form elements
         $('#id_gol_darah').val(golId);
         $('[name="id_gol_darah"]').val(golId);
 
-        // 5. Cek ulang kesesuaian kantong darah
         for (var i = 1; i <= 12; i++) {
             cekGoldarKantong(i);
         }
@@ -184,82 +186,68 @@
 
     /* Expose function untuk perubahan programmatic (load, reset, dll) */
     window.setGolonganDarahProgrammatic = function (golId) {
-        goldarProgrammatic = true;
         lastGolId = golId ? String(golId) : '';
-        syncGoldarahValues(lastGolId);
-        goldarProgrammatic = false;
+        applyGoldarah(lastGolId);
     };
 
     function bindGoldarahChange() {
-        console.log('[bindGoldarahChange] Function called');
-        var $select = $('#selectgoldarah');
-        if (!$select.length) {
-            $select = $('select[name="goldarah"]');
-        }
+        var $select = getGoldarSelect();
         if (!$select.length) {
             console.warn('[bindGoldarahChange] Select element not found');
             return;
         }
 
+        /* Nilai aktif awal = nilai database yang sudah tampil */
         lastGolId = $select.val() || '';
-        console.log('[bindGoldarahChange] Initial lastGolId:', lastGolId);
 
         $select.on('change', async function () {
-            if (updatingSelect2) {
+            if (goldarApplying) {
                 return;
             }
 
-            var golId = $(this).val();
-            console.log('[selectgoldarah] Change event fired. lastGolId:', lastGolId, 'golId:', golId);
+            var golId = $(this).val() || '';
 
-            /* Jika perubahan dari programmatic, sinkronkan dan lewati konfirmasi */
-            if (goldarProgrammatic) {
-                console.log('[selectgoldarah] Programmatic change, skipping confirm');
-                goldarProgrammatic = false;
-                lastGolId = golId;
-                syncGoldarahValues(golId);
-                return;
-            }
-
-            /* Jika nilai sama dengan sebelumnya, abaikan */
+            /* Tidak ada perubahan nilai */
             if (golId === lastGolId) {
                 return;
             }
 
-            /* Konfirmasi perubahan manual golongan darah pasien jika nilai awal sudah ada */
-            if (golId && lastGolId && golId !== lastGolId) {
-                console.log('[selectgoldarah] Manual change detected, showing confirm');
-                var result = await SwalHelper.confirm(
-                    'Ubah Golongan Darah?',
-                    'Apakah Anda yakin ingin melakukan perubahan golongan darah pasien?',
-                    {
-                        icon: 'warning',
-                        confirmButtonText: 'Ya, Ubah',
-                        cancelButtonText: 'Batal',
-                        reverseButtons: true
-                    }
-                );
-
-                if (!result.isConfirmed) {
-                    console.log('[selectgoldarah] User cancelled, reverting to:', lastGolId);
-                    /* Batal: kembalikan ke nilai sebelumnya */
-                    goldarProgrammatic = true;
-                    syncGoldarahValues(lastGolId);
-                    goldarProgrammatic = false;
-                    return;
-                }
-
-                console.log('[selectgoldarah] User confirmed change to:', golId);
-                lastGolId = golId;
-            } else {
-                lastGolId = golId;
+            /* Dikosongkan tanpa konfirmasi */
+            if (golId === '') {
+                lastGolId = '';
+                updateGolonganDarahSpan('');
+                $('#id_gol_darah').val('');
+                $('[name="id_gol_darah"]').val('');
+                return;
             }
 
-            // Jalankan sinkronisasi lengkap:
-            // 1. Value asli select berubah
-            // 2. Select2 refresh
-            // 3. Preview ikut update
-            syncGoldarahValues(golId);
+            /* Konfirmasi perubahan golongan darah pasien */
+            var result = await SwalHelper.confirm(
+                'Ubah Golongan Darah?',
+                'Apakah Anda yakin ingin melakukan perubahan golongan darah pasien?',
+                {
+                    icon: 'warning',
+                    confirmButtonText: 'Ya, Ubah',
+                    cancelButtonText: 'Batal',
+                    reverseButtons: true
+                }
+            );
+
+            if (!result.isConfirmed) {
+                /* Batal: kembalikan dropdown + Select2 + preview ke nilai lama */
+                applyGoldarah(lastGolId);
+                return;
+            }
+
+            /* Ya: simpan nilai baru sebagai nilai aktif lalu update preview */
+            lastGolId = golId;
+            updateGolonganDarahSpan(golId);
+            $('#id_gol_darah').val(golId);
+            $('[name="id_gol_darah"]').val(golId);
+
+            for (var i = 1; i <= 12; i++) {
+                cekGoldarKantong(i);
+            }
         });
     }
 
@@ -272,15 +260,7 @@
 
     function bindFormSubmit() {
         $('#formEditPermintaan').on('submit', function () {
-            var $select = $('#selectgoldarah');
-            if (!$select.length) {
-                $select = $('select[name="goldarah"]');
-            }
-            var currentGoldar = $select.val() || '';
-
-            // DEBUG SEMENTARA: Cek value dan text selectgoldarah sebelum submit
-            console.log('[DEBUG SUBMIT] #selectgoldarah val():', currentGoldar);
-            console.log('[DEBUG SUBMIT] #selectgoldarah option:selected text():', $select.find('option:selected').text().trim());
+            var currentGoldar = getGoldarSelect().val() || '';
 
             // Pastikan nilai hidden id_gol_darah tersinkron ke field POST
             if (currentGoldar) {
@@ -325,19 +305,13 @@
 
     $(function () {
         console.log('[request-edit.js] DOM ready, initializing');
-        
-        var $select = $('#selectgoldarah');
-        if (!$select.length) {
-            $select = $('select[name="goldarah"]');
-        }
-        var initialGolId = $select.val() || '';
 
-        // Sinkronisasi awal saat halaman edit dibuka agar Select2 membaca ulang dan preview sesuai database
-        if (initialGolId) {
-            syncGoldarahValues(initialGolId);
-        } else {
-            updateGolonganDarahSpan('');
-        }
+        var $select = getGoldarSelect();
+        var initialGolId = $select.length ? ($select.val() || '') : '';
+
+        /* Sinkronisasi awal: tampilkan preview sesuai nilai database
+           tanpa perlu user memilih ulang dropdown */
+        window.setGolonganDarahProgrammatic(initialGolId);
 
         bindGoldarahChange();
         autofillPasien();
