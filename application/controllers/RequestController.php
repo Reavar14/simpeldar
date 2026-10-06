@@ -56,7 +56,7 @@ class RequestController extends MY_Controller {
             $row[] = $item['tgl_minta'];
             $row[] = $item['ruangan'];
             $row[] = $item['alasan'];
-            $row[] = $item['tujuan'];
+            $row[] = !empty($item['tujuan']) ? $item['tujuan'] : '';
             $row[] = $item['goldar'];
             $row[] = $item['tgl_diperlukan'];
             $row[] = $item['jenis_darah'];
@@ -228,14 +228,36 @@ class RequestController extends MY_Controller {
     }
 
     /**
-     * Tampilkan form Edit permintaan darah (tampilan saja)
+     * Tampilkan form Edit permintaan darah - MODE PENUH
+     * Sumber: View Proses (requestcontroller/list)
      * Migrasi dari admin/edit_permintaan.php (native)
      */
     public function edit($no_permintaan = null)
     {
+        $this->_render_edit($no_permintaan, 'full_edit');
+    }
+
+    /**
+     * Tampilkan form Edit permintaan darah - MODE TERBATAS
+     * Sumber: View Proses Rawat Inap (darah/view_dokter)
+     * Hanya Tgl Diperlukan & Tgl Serah yang dapat diubah (dipaksa di backend).
+     */
+    public function edit_rawat_inap($no_permintaan = null)
+    {
+        $this->_render_edit($no_permintaan, 'limited_edit');
+    }
+
+    /**
+     * Render form edit dengan mode tertentu.
+     * @param string $no_permintaan
+     * @param string $mode  full_edit | limited_edit
+     */
+    private function _render_edit($no_permintaan, $mode)
+    {
         $this->require_level('1');
 
-        $data['d'] = $this->Request_model->get_edit_data($no_permintaan);
+        $data['d']         = $this->Request_model->get_edit_data($no_permintaan);
+        $data['edit_mode'] = $mode;
 
         // Dropdown referensi (migrasi query dropdown dari edit_permintaan.php)
         $this->load->model('Darah_model');
@@ -260,17 +282,15 @@ class RequestController extends MY_Controller {
 
     /**
      * Proses update permintaan darah (POST endpoint)
-     * Migrasi dari admin/proses_edit_permintaan.php (native)
      *
-     * Tabel terpengaruh (semua di localhost/darah):
-     *   - darah.pesan_darah         (UPDATE)
-     *   - darah.petugas_serah_terima (upsert)
-     *   - darah.kantong_luar         (upsert)
-     *   - darah.kelengkapan          (upsert)
+     * Dua mode edit (dibedakan oleh POST `edit_mode`, sumber halaman):
+     *   - full_edit    : View Proses  -> update seluruh field (logic lama).
+     *   - limited_edit : View Proses Rawat Inap -> HANYA:
+     *         darah.pesan_darah.tgl_diperlukan
+     *         darah.petugas_serah_terima.TGL_SERAH[n]
+     *     Field lain diabaikan walaupun dikirim via POST (proteksi backend).
      *
-     * Update golongan darah pasien (master.pasien di native) di-skip:
-     * environment lokal hanya punya schema `darah` dan
-     * darah.pasien2 tidak punya kolom golongan_darah (lihat Phase 3).
+     * Migrasi dari admin/proses_edit_permintaan.php (native).
      */
     public function update()
     {
@@ -290,6 +310,62 @@ class RequestController extends MY_Controller {
 
         date_default_timezone_set('Asia/Jakarta');
 
+        // Mode edit ditentukan dari POST (default: full_edit untuk kompatibilitas).
+        $edit_mode = $this->input->post('edit_mode');
+        if ($edit_mode !== 'limited_edit') {
+            $edit_mode = 'full_edit';
+        }
+
+        $userLogin = $this->session->userdata('uname');
+        $tgl_edit  = date('Y-m-d H:i:s');
+
+        if ($edit_mode === 'limited_edit') {
+            $this->_update_limited($no_permintaan, $userLogin, $tgl_edit);
+        } else {
+            $this->_update_full($no_permintaan, $userLogin, $tgl_edit);
+        }
+
+        if ($this->db->trans_status() === FALSE) {
+            redirect('requestcontroller/list?error=1');
+        } else {
+            redirect('requestcontroller/list?success=1');
+        }
+    }
+
+    /**
+     * Update terbatas (limited_edit).
+     * Hanya tgl_diperlukan & TGL_SERAH[n] yang diubah.
+     */
+    private function _update_limited($no_permintaan, $userLogin, $tgl_edit)
+    {
+        $data_pesan = array(
+            'tgl_diperlukan' => $this->norm_post('tgl_diperlukan'),
+            'nm_edit'        => $userLogin,
+            'tgl_edit'       => $tgl_edit,
+        );
+
+        $data_pst = array();
+        for ($i = 1; $i <= 12; $i++) {
+            $tgl_col = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
+            $data_pst[$tgl_col] = $this->norm_post('tgl_serah_edit_' . $i);
+        }
+
+        $this->db->trans_start();
+        $this->Request_model->update_pesan_darah($no_permintaan, $data_pesan);
+        $this->Request_model->update_petugas_serah_terima($no_permintaan, $data_pst);
+        $this->db->trans_complete();
+    }
+
+    /**
+     * Update penuh (full_edit) - logic lama.
+     * Migrasi dari admin/proses_edit_permintaan.php (native):
+     *   - darah.pesan_darah          (UPDATE)
+     *   - darah.petugas_serah_terima (upsert)
+     *   - darah.kantong_luar         (upsert)
+     *   - darah.kelengkapan          (upsert)
+     */
+    private function _update_full($no_permintaan, $userLogin, $tgl_edit)
+    {
         // Override no_kantong 11-digit dari kantong_luar (migrasi native)
         $no_kantong = array();
         for ($i = 1; $i <= 12; $i++) {
@@ -308,9 +384,7 @@ class RequestController extends MY_Controller {
             }
         }
 
-        $userLogin     = $this->session->userdata('uname');
-        $tgl_edit      = date('Y-m-d H:i:s');
-        $kelengkapan   = $this->input->post('kelengkapan') ? 1 : 0;
+        $kelengkapan = $this->input->post('kelengkapan') ? 1 : 0;
 
         // === UPDATE darah.pesan_darah ===
         $data_pesan = array(
@@ -373,12 +447,6 @@ class RequestController extends MY_Controller {
         $this->Request_model->upsert_kantong_luar($no_permintaan, $no_kantong, $goldar_kantong);
         $this->Request_model->upsert_kelengkapan($no_permintaan, $kelengkapan);
         $this->db->trans_complete();
-
-        if ($this->db->trans_status() === FALSE) {
-            redirect('requestcontroller/list?error=1');
-        } else {
-            redirect('requestcontroller/list?success=1');
-        }
     }
 
     /**

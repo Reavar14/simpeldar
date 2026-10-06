@@ -22,7 +22,7 @@ class Dashboard_model extends CI_Model {
         DATE_FORMAT(pd.tgl_minta,'%d-%m-%Y') AS tgl_minta,
         DATE_FORMAT(pd.tgl_diperlukan,'%d-%m-%Y') AS tgl_diperlukan,
 
-        pd.alasan, tuj.variabel AS TUJUAN,
+        pd.alasan, NULLIF(tuj.variabel, 'Tidak Ditentukan') AS TUJUAN,
         rstatus.DESKRIPSI AS status_proses,
         r.DESKRIPSI AS ruangan,
         pd.trombosit, pd.kadar_hb,
