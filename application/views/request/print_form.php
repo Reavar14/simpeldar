@@ -12,6 +12,36 @@ if (!function_exists('fd_norm')) {
     }
 }
 
+if (!function_exists('fd_safe_date')) {
+    function fd_safe_date($value) {
+        $v = fd_norm($value);
+        if ($v === '') {
+            return '';
+        }
+        if (strpos($v, ' ') !== false) {
+            $v = trim(substr($v, 0, strpos($v, ' ')));
+        }
+        if ($v === '' || preg_match('#^0{2,4}[-/]0{2}[-/]0{2,4}$#', $v)) {
+            return '';
+        }
+        if (preg_match('#^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$#', $v, $m)) {
+            $d = (int)$m[1]; $mo = (int)$m[2]; $y = (int)$m[3];
+            if (!checkdate($mo, $d, $y) || $y <= 1900 || $y >= 2999) {
+                return '';
+            }
+            return sprintf('%02d-%02d-%04d', $d, $mo, $y);
+        }
+        if (preg_match('#^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$#', $v, $m)) {
+            $y = (int)$m[1]; $mo = (int)$m[2]; $d = (int)$m[3];
+            if (!checkdate($mo, $d, $y) || $y <= 1900 || $y >= 2999) {
+                return '';
+            }
+            return sprintf('%02d-%02d-%04d', $d, $mo, $y);
+        }
+        return '';
+    }
+}
+
 $d = isset($d) ? $d : array();
 ?>
 <!DOCTYPE html>
@@ -20,264 +50,317 @@ $d = isset($d) ? $d : array();
     <meta charset="utf-8">
     <title>Form Darah - <?php echo htmlspecialchars(fd_norm($d['no_permintaan'])); ?></title>
     <style>
-        @page { size: A4 portrait; margin: 12mm 14mm; }
-        * { box-sizing: border-box; }
+        @page { size: A4 portrait; margin: 20pt; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 10px;
+            font-size: 8pt;
             color: #000;
             margin: 0;
             padding: 0;
+            width: 595pt;
+            height: 842pt;
         }
-        .report { width: 100%; }
-        .header { width: 100%; border-bottom: 3px double #000; padding-bottom: 5px; margin-bottom: 8px; }
-        .header:after { content: ""; display: block; clear: both; }
-        .header .logo { float: left; width: 60px; height: 52px; }
-        .header .logo img { width: 60px; height: 52px; }
-        .header .identitas { float: left; width: calc(100% - 70px); margin-left: 10px; text-align: center; }
-        .header .identitas h2 { margin: 1px 0; font-size: 14px; }
-        .header .identitas p { margin: 1px 0; font-size: 9px; }
+        /* Page wrapper - exact JRXML page size (595pt x 842pt = A4) */
+        .form-page {
+            position: relative;
+            width: 595pt;
+            height: 842pt;
+            overflow: hidden;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         .title {
-            text-align: center; font-weight: bold; font-size: 12px;
-            border-bottom: 1.5px solid #000; padding-bottom: 3px; margin-bottom: 8px;
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            border-bottom: 1.5px solid #000;
+            padding: 2px 0;
+            margin: 0;
         }
-        table.form { width: 100%; border-collapse: collapse; }
-        table.form td { vertical-align: top; padding: 1px 2px; }
-        table.form td.label { width: 130px; }
-        table.form td.sep { width: 6px; text-align: center; }
-        .section-title { font-weight: bold; font-size: 10px; margin: 8px 0 3px; }
-        table.grid { width: 100%; border-collapse: collapse; }
-        table.grid th, table.grid td {
+        /* Labels: no border, bold, bottom-aligned, height 20pt */
+        .lbl {
+            position: absolute;
+            font-weight: bold;
+            font-size: 8pt;
+            height: 20pt;
+            line-height: 20pt;
+            padding-left: 3px;
+            vertical-align: bottom;
+        }
+        /* Fields: border 0.75pt, height 20pt, middle-aligned */
+        .fld {
+            position: absolute;
             border: 0.75px solid #000;
-            padding: 2px 3px;
-            font-size: 9px;
+            font-size: 8pt;
+            height: 20pt;
+            line-height: 20pt;
+            padding: 0 3px;
+            vertical-align: middle;
+            background: #fff;
+        }
+        /* Special field heights */
+        .fld-tall { height: 50pt; line-height: 50pt; }
+        .fld-tall-top { height: 50pt; line-height: 1.2; padding: 3px; vertical-align: top; white-space: pre-wrap; }
+        /* Goldar big */
+        .goldar-big {
+            position: absolute;
+            font-size: 36px;
+            text-align: center;
+            vertical-align: middle;
+            border: 0.75px solid #000;
+            border-top: 0;
+            padding: 8px;
+            line-height: 1;
+        }
+        /* Section header with borders (Histori/Golongan Darah) */
+        .sec-hdr {
+            position: absolute;
+            font-weight: bold;
+            font-size: 10px;
+            height: 28pt;
+            line-height: 28pt;
+            padding-left: 3px;
+            text-align: center;
+            border: 0.75px solid #000;
+            border-bottom: none;
+            background: #fff;
+        }
+        /* Kantong table */
+        .kantong-wrap {
+            position: absolute;
+            top: 468pt;
+            left: 0;
+            width: 555pt;
+        }
+        table.kantong {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+        table.kantong th,
+        table.kantong td {
+            border: 0.75px solid #000;
+            height: 20pt;
+            font-size: 7.5pt;
+            vertical-align: middle;
+            padding: 0 2px;
+        }
+        table.kantong th {
+            text-align: center;
+            font-weight: bold;
+            background: #cccccc;
+            height: 26pt;
+            font-size: 8pt;
+            line-height: 8pt;
+            padding: 0;
             vertical-align: middle;
         }
-        table.grid th { text-align: center; font-weight: bold; }
-        table.grid td.no { text-align: center; width: 24px; }
-        table.grid td.kantong { width: 88px; }
-        table.grid td.gol { text-align: center; width: 52px; }
-        table.grid td.tgl { text-align: center; width: 68px; }
-        table.grid td.vol { text-align: center; width: 42px; }
-        table.grid td.mayor { width: 62px; }
-        table.grid td.minor { width: 62px; }
-        table.grid td.exp { text-align: center; width: 68px; }
-        .riwayat { border: 0.75px solid #000; padding: 4px 6px; min-height: 34px; margin-top: 3px; white-space: pre-line; }
-        .signature-area { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .signature-area td { width: 50%; text-align: center; vertical-align: top; }
-        .signature-area .role { font-weight: bold; }
-        .signature-area .space { height: 38px; }
-        .signature-area .name { margin-top: 2px; }
+        table.kantong td { text-align: center; }
+        table.kantong td.left { text-align: left; padding-left: 3px; }
+        .col-no { width: 21px; }
+        .col-nk { width: 117px; }
+        .col-tgl { width: 75px; }
+        .col-gol { width: 41px; }
+        .col-vol { width: 40px; }
+        .col-may { width: 40px; }
+        .col-min { width: 41px; }
+        .col-exp { width: 59px; }
+        .col-ser { width: 60px; }
+        .col-ter { width: 60px; }
+        /* Riwayat cell */
+        .riwayat-cell {
+            border: 0.75px solid #000;
+            border-top: 0;
+            padding: 4px 6px;
+            min-height: 50pt;
+            white-space: pre-wrap;
+            font-size: 9px;
+            vertical-align: top;
+        }
         .no-print { margin-bottom: 10px; }
         .btn-print {
-            background: #337ab7; color: #fff; border: none;
-            padding: 6px 14px; font-size: 12px; cursor: pointer; border-radius: 3px;
+            background: #337ab7;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 3px;
         }
         @media print {
-            .no-print { display: none; }
+            .no-print { display: none !important; }
+            html, body { margin: 0; padding: 0; width: 595pt; height: 842pt; }
+            @page { size: A4 portrait; margin: 0; }
+            * { margin: 0; padding: 0; }
         }
     </style>
 </head>
 <body onload="window.print();">
     <div class="no-print">
         <button class="btn-print" type="button" onclick="window.print();">
-            <i class="fa fa-print"></i> Cetak / Simpan PDF
+            Cetak / Simpan PDF
         </button>
     </div>
 
-    <div class="report">
-        <!-- Header report -->
-        <div class="header">
-            <div class="logo">
-                <img src="<?php echo base_url('assets/logo/logo-dharmais.jpg'); ?>" alt="Logo">
-            </div>
-            <div class="identitas">
-                <h2>RUMAH SAKIT KANKER &quot;DHARMAIS&quot;</h2>
-                <p>JL LET.JEND. S.PARMAN KAV.84-86 SLIPI, JAKARTA BARAT 11420</p>
-                <p>Telp: 021-5681570 Faximile: 021-5681579</p>
-            </div>
-        </div>
-
-        <div class="title">FORM PERMINTAAN DARAH</div>
+    <div class="form-page">
+        <div class="title">FORM DARAH</div>
 
         <?php if (!empty($d)) { ?>
-        <!-- Identitas pasien & permintaan -->
-        <table class="form">
-            <tr>
-                <td class="label">Nomor Permintaan</td>
-                <td class="sep">:</td>
-                <td><strong><?php echo htmlspecialchars(fd_norm($d['no_permintaan'])); ?></strong></td>
-                <td class="label">Tanggal Permintaan</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['tgl_minta'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Nomor MR</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['mr'])); ?></td>
-                <td class="label">Tanggal Diperlukan</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['tgl_diperlukan'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Nama Pasien</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['nama'])); ?></td>
-                <td class="label">Jenis Kelamin</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['jenis_kelamin'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Tanggal Lahir</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['tgl_lahir'])); ?> (<?php echo htmlspecialchars(fd_norm($d['usia'])); ?> th)</td>
-                <td class="label">Golongan Darah</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['gol_darah'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Ruangan Rawat</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['RUANGAN'])); ?></td>
-                <td class="label">Status</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['status_proses'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Dokter DPJP</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['nama_dokter'])); ?></td>
-                <td class="label">Tujuan</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['TUJUAN'])); ?></td>
-            </tr>
-        </table>
+        <?php
+            $f = function ($k) use ($d) { return htmlspecialchars(fd_norm($d[$k] ?? null)); };
+        ?>
 
-        <div class="section-title">Detail Permintaan Darah</div>
-        <table class="form">
-            <tr>
-                <td class="label">Jenis Darah</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['jenis_darah'])); ?></td>
-                <td class="label">Tipe Darah</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['bufycoat'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Volume</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['volume'])); ?></td>
-                <td class="label">Diagnosa Kanker</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['diagnosa'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Alasan</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['alasan'])); ?></td>
-                <td class="label">Kadar HB</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['kadar_hb'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Trombosit</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['trombosit'])); ?></td>
-                <td class="label">Hasil Pemeriksaan</td>
-                <td class="sep">:</td>
-                <td><strong><?php echo htmlspecialchars(fd_norm($d['hasil'])); ?></strong></td>
-            </tr>
-            <tr>
-                <td class="label">Nama Analis</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['nama_analis'])); ?></td>
-                <td class="label">Analis 2</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['nama_analis2'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Perawat</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['nama_perawat'])); ?></td>
-                <td class="label">Auto Kontrol</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['autkon'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Petugas Pengambil Contoh</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['pengambildarah'])); ?></td>
-                <td class="label">Tanggal/Jam Analis</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(fd_norm($d['jam_analis'])); ?></td>
-            </tr>
-        </table>
+        <!-- Labels Row 1: y=12pt -->
+        <div class="lbl" style="top:12pt; left:0pt; width:279pt;">Nomor Permintaan</div>
+        <div class="lbl" style="top:12pt; left:290pt; width:265pt;">Tanggal Permintaan</div>
 
-        <!-- Histori riwayat -->
-        <div class="section-title">Histori Riwayat Alergi Transfusi dan Catatan</div>
-        <div class="riwayat"><?php echo htmlspecialchars(fd_norm($d['RIWAYAT'])); ?>&nbsp;</div>
+        <!-- Fields Row 1: y=32pt -->
+        <div class="fld" style="top:32pt; left:0pt; width:278pt;"><?php echo $f('no_permintaan'); ?></div>
+        <div class="fld" style="top:32pt; left:290pt; width:264pt;"><?php echo $f('tgl_minta'); ?></div>
 
-        <!-- Tabel 12 kantong -->
-        <div class="section-title">Detail Komponen Darah</div>
-        <table class="grid">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nomor Kantong</th>
-                    <th>Gol. Darah Kantong</th>
-                    <th>Tanggal Input Kantong</th>
-                    <th>Volume</th>
-                    <th>Mayor</th>
-                    <th>Minor</th>
-                    <th>EXP Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php for ($i = 1; $i <= 12; $i++) { ?>
-                    <?php
-                        $no_kantong = fd_norm($d['no_kantong_' . $i] ?? null);
-                        $gol_kantong = fd_norm($d['GOLDAR_KL' . $i] ?? null);
-                        $tgl_input = fd_norm($d['tglkantong' . $i] ?? null);
-                        if ($tgl_input !== '' && preg_match('/^\d{4}-\d{2}-\d{2}/', $tgl_input)) {
-                            $tgl_input = date('d-m-Y', strtotime($tgl_input));
-                        }
-                        $vol = fd_norm($d['volume_' . $i] ?? null);
-                        $exp = fd_norm($d['exp_' . $i] ?? null);
-                        $mayor = fd_norm($d['mayor_' . $i] ?? null);
-                        $minor = fd_norm($d['minor_' . $i] ?? null);
-                    ?>
+        <!-- Labels Row 2: y=52pt -->
+        <div class="lbl" style="top:52pt; left:0pt; width:125pt;">Nomor MR</div>
+        <div class="lbl" style="top:52pt; left:125pt; width:153pt;">Nama Pasien</div>
+        <div class="lbl" style="top:52pt; left:290pt; width:110pt;">Jenis Kelamin</div>
+        <div class="lbl" style="top:52pt; left:400pt; width:154pt;">Tanggal Lahir</div>
+
+        <!-- Fields Row 2: y=72pt -->
+        <div class="fld" style="top:72pt; left:0pt; width:125pt;"><?php echo $f('mr'); ?></div>
+        <div class="fld" style="top:72pt; left:125pt; width:153pt;"><?php echo $f('nama'); ?></div>
+        <div class="fld" style="top:72pt; left:290pt; width:110pt;"><?php echo $f('jenis_kelamin'); ?></div>
+        <div class="fld" style="top:72pt; left:400pt; width:154pt;"><?php echo $f('tgl_lahir'); ?></div>
+
+        <!-- Labels Row 3: y=92pt -->
+        <div class="lbl" style="top:92pt; left:0pt; width:126pt;">Golongan Darah</div>
+        <div class="lbl" style="top:92pt; left:290pt; width:110pt;">Jenis Darah</div>
+        <div class="lbl" style="top:92pt; left:400pt; width:154pt;">Tipe Darah</div>
+
+        <!-- Fields Row 3: y=112pt -->
+        <div class="fld" style="top:112pt; left:0pt; width:125pt;"><?php echo $f('gol_darah'); ?></div>
+        <div class="fld" style="top:112pt; left:290pt; width:110pt;"><?php echo $f('jenis_darah'); ?></div>
+        <div class="fld" style="top:112pt; left:400pt; width:154pt;"><?php echo $f('bufycoat'); ?></div>
+
+        <!-- Labels Row 4: y=132pt -->
+        <div class="lbl" style="top:132pt; left:0pt; width:125pt;">Tanggal Diperlukan</div>
+        <div class="lbl" style="top:132pt; left:136pt; width:142pt;">Tujuan</div>
+        <div class="lbl" style="top:132pt; left:290pt; width:110pt;">Volume</div>
+
+        <!-- Fields Row 4: y=152pt -->
+        <div class="fld" style="top:152pt; left:0pt; width:125pt;"><?php echo $f('tgl_diperlukan'); ?></div>
+        <div class="fld" style="top:152pt; left:290pt; width:110pt;"><?php echo $f('volume'); ?></div>
+
+        <!-- Labels Row 5: y=173pt -->
+        <div class="lbl" style="top:173pt; left:0pt; width:136pt;">Alasan</div>
+        <div class="lbl" style="top:173pt; left:136pt; width:143pt;">Diagnosa Kanker</div>
+        <div class="lbl" style="top:173pt; left:290pt; width:143pt;">Trombosit</div>
+        <div class="lbl" style="top:173pt; left:433pt; width:121pt;">Kadar HB</div>
+
+        <!-- Fields Row 5: y=193pt -->
+        <div class="fld" style="top:193pt; left:0pt; width:137pt;"><?php echo $f('alasan'); ?></div>
+        <div class="fld" style="top:193pt; left:136pt; width:142pt;"><?php echo $f('diagnosa'); ?></div>
+        <div class="fld" style="top:193pt; left:290pt; width:143pt;"><?php echo $f('trombosit'); ?></div>
+        <div class="fld" style="top:193pt; left:433pt; width:121pt;"><?php echo $f('kadar_hb'); ?></div>
+
+        <!-- Labels Row 6: y=216pt -->
+        <div class="lbl" style="top:216pt; left:0pt; width:279pt;">Dokter DPJP</div>
+        <div class="lbl" style="top:216pt; left:290pt; width:265pt;">Status</div>
+
+        <!-- Fields Row 6: y=236pt (only nama_dokter has field at this y) -->
+        <div class="fld" style="top:236pt; left:0pt; width:279pt;"><?php echo $f('nama_dokter'); ?></div>
+
+        <!-- Labels Row 7: y=256pt -->
+        <div class="lbl" style="top:256pt; left:0pt; width:279pt;">Petugas Pengambil Contoh Darah</div>
+        <div class="lbl" style="top:256pt; left:290pt; width:265pt;">Ruangan Rawat</div>
+
+        <!-- Fields Row 7: y=276pt -->
+        <div class="fld" style="top:276pt; left:0pt; width:279pt;"><?php echo $f('pengambildarah'); ?></div>
+        <div class="fld" style="top:276pt; left:290pt; width:265pt;"><?php echo $f('RUANGAN'); ?></div>
+
+        <!-- Labels Row 8: y=296pt -->
+        <div class="lbl" style="top:296pt; left:0pt; width:279pt;">Nama Analis</div>
+        <div class="lbl" style="top:296pt; left:290pt; width:143pt;">Hasil Pemeriksaan</div>
+        <div class="lbl" style="top:296pt; left:433pt; width:122pt;">Perawat</div>
+
+        <!-- Fields Row 8: y=316pt -->
+        <div class="fld" style="top:316pt; left:0pt; width:279pt;"><?php echo $f('nama_analis'); ?></div>
+        <div class="fld" style="top:316pt; left:290pt; width:143pt;"><?php echo $f('hasil'); ?></div>
+        <div class="fld" style="top:316pt; left:433pt; width:122pt;"><?php echo $f('nama_perawat'); ?></div>
+
+        <!-- Section Header Row 9: y=348pt (height 28pt) -->
+        <div class="sec-hdr" style="top:348pt; left:0pt; width:418pt; border-left:0.75px solid #000; border-top:0.75px solid #000; border-right:0.75px solid #000;">Histori Riwayat Alergi Transfusi dan Catatan</div>
+        <div class="sec-hdr" style="top:348pt; left:418pt; width:137pt; border-top:0.75px solid #000; border-right:0.75px solid #000;">Golongan Darah:</div>
+
+        <!-- Fields Row 9: y=376pt (height 50pt) -->
+        <div class="fld fld-tall-top" style="top:376pt; left:0pt; width:418pt; border-left:0.75px solid #000; border-bottom:0.75px solid #000; border-right:0.75px solid #000;"><?php echo $f('RIWAYAT'); ?></div>
+        <div class="goldar-big" style="top:376pt; left:418pt; width:137pt; height:50pt; border-left:0.75px solid #000; border-bottom:0.75px solid #000; border-right:0.75px solid #000;"><?php echo $f('gol_darah'); ?></div>
+
+        <!-- Row 10: y=432pt -->
+        <div class="lbl" style="top:432pt; left:0pt; width:99pt;">Hasil Pemeriksaan :</div>
+        <div class="fld" style="top:432pt; left:99pt; width:115pt; border:none;"><?php echo $f('nama_analis2'); ?></div>
+
+        <!-- Kantong Table: starts at y=460pt -->
+        <div class="kantong-wrap">
+            <table class="kantong">
+                <thead>
                     <tr>
-                        <td class="no"><?php echo $i; ?></td>
-                        <td class="kantong"><?php echo htmlspecialchars($no_kantong); ?></td>
-                        <td class="gol"><?php echo htmlspecialchars($gol_kantong); ?></td>
-                        <td class="tgl"><?php echo htmlspecialchars($tgl_input); ?></td>
-                        <td class="vol"><?php echo htmlspecialchars($vol); ?></td>
-                        <td class="mayor"><?php echo htmlspecialchars($mayor); ?></td>
-                        <td class="minor"><?php echo htmlspecialchars($minor); ?></td>
-                        <td class="exp"><?php echo htmlspecialchars($exp); ?></td>
+                        <th class="col-no">No</th>
+                        <th class="col-nk">Nomor Kantong</th>
+                        <th class="col-tgl">Tanggal Input Kantong</th>
+                        <th class="col-gol">Gol. Darah Kantong</th>
+                        <th class="col-vol">Volume</th>
+                        <th class="col-may">Mayor</th>
+                        <th class="col-min">Minor</th>
+                        <th class="col-exp">EXP Date</th>
+                        <th class="col-ser">Nama, Tanggal, Jam, Yg memberi</th>
+                        <th class="col-ter">Nama, Alamat, Telp/Hp Penerima</th>
                     </tr>
-                <?php } ?>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <?php for ($i = 1; $i <= 12; $i++) { ?>
+                        <?php
+                            $nk  = fd_norm($d['no_kantong_' . $i] ?? null);
+                            $tgl = fd_safe_date($d['tglkantong' . $i] ?? null);
+                            $vol = fd_norm($d['volume_' . $i] ?? null);
+                            $may = fd_norm($d['mayor_' . $i] ?? null);
+                            $min = fd_norm($d['minor_' . $i] ?? null);
+                            $exp = fd_safe_date($d['exp_' . $i] ?? null);
 
-        <!-- Area tanda tangan -->
-        <table class="signature-area">
-            <tr>
-                <td>
-                    <div class="role">Nama, Tanggal, Jam, Yang Memberi</div>
-                    <div class="space"></div>
-                    <div class="name">( <?php echo htmlspecialchars(fd_norm($d['nama_analis'])); ?> )</div>
-                </td>
-                <td>
-                    <div class="role">Nama, Alamat, Telp/Hp Penerima</div>
-                    <div class="space"></div>
-                    <div class="name">( <?php echo htmlspecialchars(fd_norm($d['pengambildarah'])); ?> )</div>
-                </td>
-            </tr>
-        </table>
+                            $gd = fd_norm($d['PRO_DESKDAR_' . $i] ?? null);
+
+                            if ($nk === '') {
+                                $tgl = ''; $gd = ''; $vol = ''; $may = ''; $min = ''; $exp = '';
+                            }
+
+                            $serah_col  = ($i === 1) ? 'PETUGAS_SERAH'  : 'PETUGAS_SERAH_' . $i;
+                            $terima_col = ($i === 1) ? 'PETUGAS_TERIMA' : 'PETUGAS_TERIMA_' . $i;
+                            $serah  = fd_norm($d[$serah_col] ?? null);
+                            $terima = fd_norm($d[$terima_col] ?? null);
+                        ?>
+                        <tr>
+                            <td class="col-no"><?php echo $i; ?></td>
+                            <td class="col-nk left"><?php echo htmlspecialchars($nk); ?></td>
+                            <td class="col-tgl"><?php echo htmlspecialchars($tgl); ?></td>
+                            <td class="col-gol"><?php echo htmlspecialchars($gd); ?></td>
+                            <td class="col-vol"><?php echo htmlspecialchars($vol); ?></td>
+                            <td class="col-may"><?php echo htmlspecialchars($may); ?></td>
+                            <td class="col-min"><?php echo htmlspecialchars($min); ?></td>
+                            <td class="col-exp"><?php echo htmlspecialchars($exp); ?></td>
+                            <td class="col-ser"><?php echo htmlspecialchars($serah); ?></td>
+                            <td class="col-ter"><?php echo htmlspecialchars($terima); ?></td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+
         <?php } else { ?>
         <p>Data permintaan darah tidak ditemukan.</p>
         <?php } ?>
+        </div>
     </div>
 </body>
 </html>

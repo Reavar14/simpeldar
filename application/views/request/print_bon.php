@@ -31,181 +31,260 @@ if ($tanggal_terima === '') {
     <meta charset="utf-8">
     <title>Bon Permintaan Darah - <?php echo htmlspecialchars(bn_norm($d['no_permintaan'])); ?></title>
     <style>
-        @page { size: A5 portrait; margin: 8mm 10mm; }
+        /* 
+           Native JRXML bonminta.jrxml exact specs:
+           pageWidth=297pt pageHeight=421pt
+           leftMargin=20pt rightMargin=20pt topMargin=0 bottomMargin=10pt
+           columnWidth=257pt
+           All coordinates in points (1pt = 1/72 inch)
+        */
+        @page {
+            size: 104.4mm 148.2mm;
+            margin: 0mm 7.05mm 3.52mm 7.05mm;
+        }
         * { box-sizing: border-box; }
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 11px;
+        html, body {
+            font-family: 'DejaVu Sans', 'SansSerif', Arial, Helvetica, sans-serif;
+            font-size: 9pt;
+            line-height: 1.2;
             color: #000;
             margin: 0;
             padding: 0;
+            width: 104.4mm;
+            height: 148.2mm;
         }
-        .report { width: 100%; }
-        .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 8px; }
-        .header h2 { margin: 0; font-size: 13px; }
-        .header p { margin: 1px 0; font-size: 9px; }
-        .header .form-code { font-size: 8px; font-style: italic; color: #444; }
+        /* Page wrapper - exact JRXML page size */
+        .bon-page {
+            width: 104.4mm;
+            height: 148.2mm;
+            position: relative;
+            overflow: hidden;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        /* Content area = columnWidth = 257pt = 90.7mm */
+        .report { width: 90.7mm; }
+
+        /* Header: matches pageHeader band (height 54pt) */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            height: 54pt;
+            padding-top: 0;
+        }
+        .bon-header {
+            position: relative;
+            top: 5pt;
+        }
+        .header-left {
+            width: 127pt;
+        }
+        .header-left p {
+            margin: 0;
+            font-size: 5pt;
+            line-height: 7pt;
+            height: 7pt;
+            font-family: 'DejaVu Sans', 'SansSerif', Arial, Helvetica, sans-serif;
+        }
+        .header-right {
+            width: 58pt;
+            text-align: center;
+            margin-left: auto;
+            margin-top: 5pt; /* y=5 in JRXML */
+        }
+        .header-right .frm-line {
+            font-size: 3pt;
+            font-style: italic;
+            font-family: 'DejaVu Sans', 'SansSerif', Arial, Helvetica, sans-serif;
+            line-height: 1.0;
+            display: block;
+            margin: 0;
+        }
+        .header-right .frm-line:first-child {
+            margin-bottom: 0; /* y=5 to y=13 = 8pt gap */
+        }
+
+        /* Title: matches detail band y=2, h=17, border-bottom 1.5pt */
         .title {
-            text-align: center; font-weight: bold; font-size: 13px;
-            border-bottom: 1.5px solid #000; padding-bottom: 4px; margin-bottom: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12pt;
+            font-family: 'DejaVu Sans', 'SansSerif', Arial, Helvetica, sans-serif;
+            border-bottom: 1.5pt solid #000;
+            padding: 2pt 0;
+            margin: 2pt 0 4pt 0;
+            height: 17pt;
+            line-height: 1.2;
         }
-        table.form { width: 100%; border-collapse: collapse; }
-        table.form td { vertical-align: top; padding: 1px 2px; }
-        table.form td.label { width: 105px; }
-        table.form td.sep { width: 8px; text-align: center; }
-        table.grid { width: 100%; border-collapse: collapse; margin-top: 4px; }
-        table.grid th, table.grid td {
-            border: 0.75px solid #000;
-            padding: 3px 4px;
-            font-size: 10px;
+
+        /* Form table: matches detail field positions */
+        table.form {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+            font-family: 'DejaVu Sans', 'SansSerif', Arial, Helvetica, sans-serif;
+            margin: 0;
+        }
+        table.form td {
             vertical-align: middle;
+            padding: 0;
+            margin: 0;
         }
-        table.grid th { text-align: center; font-weight: bold; background: #f0f0f0; }
-        .note { margin-top: 8px; font-size: 10px; }
-        .note .warn { font-weight: bold; }
-        .signature-area { width: 100%; border-collapse: collapse; margin-top: 24px; }
-        .signature-area td { width: 50%; text-align: center; vertical-align: top; }
-        .signature-area .role { font-weight: bold; }
-        .signature-area .space { height: 42px; }
-        .signature-area .name { margin-top: 2px; }
-        .no-print { margin-bottom: 10px; }
+        /* Label column: x=10 to x=117 = 107pt */
+        table.form td.label {
+            width: 107pt;
+            padding-right: 4pt;
+        }
+        /* Colon column: x=117, w=10pt */
+        table.form td.sep {
+            width: 10pt;
+            text-align: center;
+            font-weight: bold;
+        }
+        /* Value column: x=127 onward */
+        table.form td.value {
+            width: auto;
+        }
+        /* Bold for No. Permintaan value */
+        table.form tr:first-child td.value { font-weight: bold; }
+
+        /* Row heights matching JRXML y positions */
+        table.form tr:nth-child(1) td { height: 20pt; }  /* y=29, h=20 */
+        table.form tr:nth-child(2) td { height: 15pt; }  /* y=49, h=15 */
+        table.form tr:nth-child(3) td { height: 15pt; }  /* y=64, h=15 */
+        table.form tr:nth-child(4) td { height: 15pt; }  /* y=79, h=15 */
+        table.form tr:nth-child(5) td { height: 15pt; }  /* y=94, h=15 */
+        table.form tr:nth-child(6) td { height: 15pt; }  /* y=109, h=15 */
+        table.form tr:nth-child(7) td { height: 15pt; }  /* y=125, h=15 */
+        table.form tr:nth-child(8) td { height: 15pt; }  /* y=140, h=15 */
+        table.form tr:nth-child(9) td { height: 15pt; }  /* y=157, h=15 */
+        table.form tr:nth-child(10) td { height: 15pt; } /* y=174, h=15 */
+        table.form tr:nth-child(11) td { height: 15pt; } /* y=191, h=15 */
+        table.form tr:nth-child(12) td { height: 15pt; } /* y=208, h=15 */
+
+        /* Umur/Kelamin special: value split */
+        table.form td.value-split { width: 25pt; }
+        table.form td.sep-slash { width: 11pt; text-align: center; font-weight: bold; }
+        table.form td.value-kelamin { width: 13pt; }
+
+        /* Note section - matches JRXML y=234, h=16, font 12pt bold italic center */
+        .note {
+            margin-top: 16pt; /* gap from Note row (y=208+15=223) to E-MR (y=234) = 11pt, but table spacing adds */
+            font-size: 12pt;
+            font-weight: bold;
+            font-style: italic;
+            font-family: 'DejaVu Sans', 'SansSerif', Arial, Helvetica, sans-serif;
+            text-align: center;
+            width: 100%;
+        }
+
+        .no-print { margin-bottom: 10pt; }
         .btn-print {
             background: #337ab7; color: #fff; border: none;
-            padding: 6px 14px; font-size: 12px; cursor: pointer; border-radius: 3px;
+            padding: 6px 14px; font-size: 12pt; cursor: pointer; border-radius: 3px;
         }
         @media print {
-            .no-print { display: none; }
+            .no-print { display: none !important; }
+            html, body { margin: 0; padding: 0; width: 104.4mm; height: 148.2mm; }
+            @page { size: 104.4mm 148.2mm; margin: 0mm 7.05mm 3.52mm 7.05mm; }
+            * { margin: 0; padding: 0; }
         }
     </style>
 </head>
 <body onload="window.print();">
     <div class="no-print">
         <button class="btn-print" type="button" onclick="window.print();">
-            <i class="fa fa-print"></i> Cetak / Simpan PDF
+            Cetak / Simpan PDF
         </button>
     </div>
 
-    <div class="report">
-        <!-- Header report -->
-        <div class="header">
-            <h2>RUMAH SAKIT KANKER DHARMAIS</h2>
-            <p>JL. LETJEND. S. PARMAN KAV. 84-86</p>
-            <p>SLIPI - JAKARTA BARAT</p>
-            <p>Telp. 021-5681570 ext 2239</p>
-            <div class="form-code">FRM.IBD.002.Rev.02</div>
+    <div class="bon-page">
+        <div class="report">
+        <div class="header bon-header">
+            <div class="header-left">
+                <p>RUMAH SAKIT KANKER DHARMAIS</p>
+                <p>JL.LETJEND. S.PARMAN KAV.84-86</p>
+                <p>SLIPI-JAKARTA BARAT</p>
+                <p>Telp. 021-5681570 ext 2239</p>
+            </div>
+            <div class="header-right">
+                <span class="frm-line">FRM.IBD.002.Rev.02</span>
+                <span class="frm-line">2 April 2012</span>
+            </div>
         </div>
 
         <div class="title">BON NOMOR PERMINTAAN DARAH</div>
 
         <?php if (!empty($d)) { ?>
-        <!-- Identitas pasien -->
         <table class="form">
             <tr>
                 <td class="label">No. Permintaan</td>
                 <td class="sep">:</td>
-                <td><strong><?php echo htmlspecialchars(bn_norm($d['no_permintaan'])); ?></strong></td>
+                <td class="value"><strong><?php echo htmlspecialchars(bn_norm($d['no_permintaan'])); ?></strong></td>
             </tr>
             <tr>
                 <td class="label">Nomor MR</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['mr'])); ?></td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['mr'])); ?></td>
             </tr>
             <tr>
                 <td class="label">Nama Pasien</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['nama'])); ?></td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['nama'])); ?></td>
             </tr>
             <tr>
-                <td class="label">Umur / Kelamin</td>
+                <td class="label">Umur</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['umur'])); ?> tahun / <?php echo htmlspecialchars(bn_norm($d['kelamin'])); ?></td>
+                <td class="value value-split"><?php echo htmlspecialchars(bn_norm($d['umur'])); ?></td>
+                <td class="sep sep-slash">/</td>
+                <td class="value value-kelamin"><?php echo htmlspecialchars(bn_norm($d['kelamin'])); ?></td>
             </tr>
             <tr>
                 <td class="label">Ruangan</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['ruangan'])); ?></td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['ruangan'])); ?></td>
             </tr>
             <tr>
-                <td class="label">Dokter Peminta</td>
+                <td class="label">Jenis Darah</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['nama_dokter'])); ?></td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['nama_jenis'])); ?></td>
             </tr>
-        </table>
-
-        <!-- Tabel kebutuhan darah -->
-        <table class="grid">
-            <thead>
-                <tr>
-                    <th>Jenis Darah</th>
-                    <th>Gol. Darah</th>
-                    <th>Volume</th>
-                    <th>Tgl Diperlukan</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><?php echo htmlspecialchars(bn_norm($d['nama_jenis'])); ?></td>
-                    <td style="text-align:center;"><?php echo htmlspecialchars(bn_norm($d['gol_darah'])); ?></td>
-                    <td style="text-align:center;"><?php echo htmlspecialchars(bn_norm($d['volume'])); ?></td>
-                    <td style="text-align:center;"><?php echo htmlspecialchars(bn_norm($d['tgl_diperlukan'])); ?></td>
-                    <td style="text-align:center;"><?php echo htmlspecialchars(bn_norm($d['status_proses'])); ?></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Detail permintaan -->
-        <table class="form">
+            <tr>
+                <td class="label">Volume</td>
+                <td class="sep">:</td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['volume'])); ?></td>
+            </tr>
             <tr>
                 <td class="label">Tujuan</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['TUJUAN'])); ?></td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['TUJUAN'])); ?></td>
             </tr>
             <tr>
-                <td class="label">Alasan</td>
+                <td class="label">Rencana Transfusi</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['alasan'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label">Petugas IBD</td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars(bn_norm($d['nama_analis'])); ?></td>
-            </tr>
-            <tr>
-                <td class="label"><?php echo $label_tanggal; ?></td>
-                <td class="sep">:</td>
-                <td><?php echo htmlspecialchars($tanggal_terima); ?></td>
+                <td class="value"><?php echo htmlspecialchars(bn_norm($d['tgl_diperlukan'])); ?></td>
             </tr>
             <tr>
                 <td class="label">Petugas Terima Sampel</td>
                 <td class="sep">:</td>
-                <td><?php echo htmlspecialchars($petugas_terima); ?></td>
+                <td class="value"><?php echo htmlspecialchars($petugas_terima); ?></td>
+            </tr>
+            <tr>
+                <td class="label">Note</td>
+                <td class="sep">:</td>
+                <td class="value">Masa simpan darah 3 hari</td>
             </tr>
         </table>
 
         <div class="note">
-            <div class="warn">Note : Masa simpan darah 3 hari</div>
-            <div>* Setiap ambil darah wajib isi E-MR</div>
+            <div class="emr">* Setiap ambil darah wajib isi E-MR</div>
         </div>
-
-        <!-- Area tanda tangan -->
-        <table class="signature-area">
-            <tr>
-                <td>
-                    <div class="role">Petugas Pemberi Darah</div>
-                    <div class="space"></div>
-                    <div class="name">( <?php echo htmlspecialchars(bn_norm($d['nama_analis'])); ?> )</div>
-                </td>
-                <td>
-                    <div class="role">Petugas Penerima</div>
-                    <div class="space"></div>
-                    <div class="name">( <?php echo htmlspecialchars($petugas_terima); ?> )</div>
-                </td>
-            </tr>
-        </table>
         <?php } else { ?>
         <p>Data permintaan darah tidak ditemukan.</p>
         <?php } ?>
+        </div>
     </div>
 </body>
 </html>
