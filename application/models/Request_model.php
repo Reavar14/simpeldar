@@ -302,7 +302,6 @@ class Request_model extends CI_Model {
      */
     public function get_form_darah($no_permintaan)
     {
-        // Daftar field kantong & referensi yang di-resolve di PHP
         $kantong_fields = array();
         for ($i = 1; $i <= 12; $i++) {
             $kantong_fields[] = "pd.no_kantong_{$i}";
@@ -312,6 +311,12 @@ class Request_model extends CI_Model {
             $kantong_fields[] = "pd.myr_{$i}";
             $kantong_fields[] = "pd.mnr_{$i}";
             $kantong_fields[] = "kl.GOLDAR_KL{$i}";
+            $kantong_fields[] = "kl.NOMOR_KL{$i}";
+        }
+
+        $case_pro_deskdar = array();
+        for ($i = 1; $i <= 12; $i++) {
+            $case_pro_deskdar[] = "CASE WHEN CHAR_LENGTH(TRIM(IFNULL(pd.no_kantong_{$i}, ''))) = 11 AND kl.NOMOR_KL{$i} IS NOT NULL AND TRIM(kl.NOMOR_KL{$i}) <> '' THEN kl.GOLDAR_KL{$i} ELSE '' END AS PRO_DESKDAR_{$i}";
         }
 
         $sql = "SELECT pd.no_permintaan,
@@ -338,6 +343,7 @@ class Request_model extends CI_Model {
             (SELECT GROUP_CONCAT(CASE WHEN riw.riwayattrans IS NULL OR TRIM(riw.riwayattrans)='' THEN NULL ELSE CONCAT('- ', TRIM(riw.riwayattrans)) END ORDER BY riw.tgl_creat DESC, riw.no_permintaan DESC SEPARATOR '\n')
                 FROM darah.pesan_darah riw WHERE riw.mr = pd.mr) RIWAYAT,
             " . implode(",\n            ", $kantong_fields) . ",
+            " . implode(",\n            ", $case_pro_deskdar) . ",
             pts.PETUGAS_SERAH, pts.PETUGAS_TERIMA, pts.TGL_SERAH,
             pts.PETUGAS_SERAH_2, pts.PETUGAS_TERIMA_2, pts.TGL_SERAH2,
             pts.PETUGAS_SERAH_3, pts.PETUGAS_TERIMA_3, pts.TGL_SERAH3,
@@ -376,8 +382,6 @@ class Request_model extends CI_Model {
             return null;
         }
 
-        // Resolve ID mayor (JENIS=5) / minor (JENIS=6) ke deskripsi
-        // Ambil referensi yang relevan dalam satu query
         $ref = $this->db->query(
             "SELECT ID, JENIS, DESKRIPSI FROM darah.referensi WHERE JENIS IN (5, 6) ORDER BY ID"
         )->result_array();

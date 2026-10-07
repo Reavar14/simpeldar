@@ -617,6 +617,58 @@ class RequestController extends MY_Controller {
     }
 
     /**
+     * Cetak Bon Darah - Endpoint untuk tombol Cetak Bon Darah
+     * Migrasi dari native: bonminta.php (query param id)
+     * URL: requestcontroller/cetak_bon_darah?id=2026100008
+     */
+    public function cetak_bon_darah()
+    {
+        $this->require_level('1');
+
+        $id = trim($this->input->get('id', TRUE));
+
+        if ($id === '') {
+            show_404();
+            return;
+        }
+
+        $data['d'] = $this->Request_model->get_bon($id);
+
+        if (empty($data['d'])) {
+            show_404();
+            return;
+        }
+
+        $this->load->view('request/print_bon', $data);
+    }
+
+    /**
+     * Cetak Form Darah - Endpoint untuk tombol Cetak Form Darah
+     * Migrasi dari native: CetakFormDarah.php (query param id)
+     * URL: requestcontroller/cetak_form_darah?id=2026100008
+     */
+    public function cetak_form_darah()
+    {
+        $this->require_level('1');
+
+        $id = trim($this->input->get('id', TRUE));
+
+        if ($id === '') {
+            show_404();
+            return;
+        }
+
+        $data['d'] = $this->Request_model->get_form_darah($id);
+
+        if (empty($data['d'])) {
+            show_404();
+            return;
+        }
+
+        $this->load->view('request/print_form', $data);
+    }
+
+    /**
      * Ambil POST dan normalize nilai kosong menjadi NULL.
      *
      * MySQL lokal memakai STRICT_TRANS_TABLES + NO_ZERO_DATE, sehingga

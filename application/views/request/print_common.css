@@ -1,0 +1,33 @@
+/* Common print CSS for JRXML-like reports */
+/* ============================================
+   BON DARAH: pageWidth=297pt pageHeight=421pt
+   leftMargin=20pt rightMargin=20pt topMargin=0 bottomMargin=10pt
+   FORM DARAH: pageWidth=595pt pageHeight=842pt (A4)
+   margin=20pt all sides
+*/
+@media print {
+    /* Reset browser print defaults */
+    body, html {
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white;
+    }
+    
+    /* Hide non-print elements */
+    .no-print, .btn-print, .screen-only {
+        display: none !important;
+    }
+    
+    /* Prevent page breaks inside critical elements */
+    .report, table.kantong, table.box, .riwayat-cell, .goldar-big {
+        page-break-inside: avoid;
+    }
+    
+    /* No headers/footers */
+    @page {
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-header: 0;
+        margin-footer: 0;
+    }
+}
