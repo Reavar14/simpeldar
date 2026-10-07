@@ -1,36 +1,40 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
-<!-- DATA KANTONG DARAH -->
-<div class="native-section-title d-flex align-items-center justify-content-between">
-    <span>
-        DATA KANTONG DARAH
-    </span>
-</div>
-<div class="kantong-table-wrapper">
-    <table class="kantong-table">
-        <thead>
-            <tr>
-                <th>No. Kantong</th>
-                <th>Gol. Darah</th>
-                <th>Exp Date</th>
-                <th>Tgl. Input</th>
-                <th>Volume</th>
-                <th>MAYOR</th>
-                <th>MINOR</th>
-                <th>Tgl. Serah</th>
-                <th>Petugas Serah</th>
-                <th>Petugas Terima</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php for ($i = 1; $i <= 12; $i++): ?>
-                <?php
-                $this->load->view(
-                    'darah/components/bag_item',
-                    array('i' => $i)
-                );
-                ?>
-            <?php endfor; ?>
-        </tbody>
-    </table>
+<!-- ============================================================
+     CARD 4 - DATA KANTONG DARAH
+     ============================================================ -->
+<div class="card mb-4">
+    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-prescription-bottle-medical text-primary me-2"></i> Data Kantong Darah
+        </h5>
+        <div class="ms-auto">
+            <span class="badge bg-primary fs-6" id="kantongFilledCount">0 / 12 terisi</span>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Kantong 1-3 always visible -->
+        <div class="row g-3" id="kantongUtama">
+            <?php for ($i = 1; $i <= 3; $i++) { $this->load->view('darah/components/bag_item', array('i' => $i)); } ?>
+        </div>
+
+        <!-- Kantong 4-12 collapsible -->
+        <div class="collapse" id="kantongLainnya">
+            <div class="row g-3">
+                <?php for ($i = 4; $i <= 12; $i++) { $this->load->view('darah/components/bag_item', array('i' => $i)); } ?>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="button"
+                    class="btn btn-outline-primary"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#kantongLainnya"
+                    id="btnToggleKantong"
+                    aria-expanded="false"
+                    aria-controls="kantongLainnya">
+                <i class="fas fa-chevron-down me-1"></i> Tampilkan Kantong 4–12
+            </button>
+        </div>
+    </div>
 </div>

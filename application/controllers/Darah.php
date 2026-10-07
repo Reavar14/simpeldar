@@ -77,7 +77,6 @@ class Darah extends MY_Controller {
         
         // Get riwayat alergi
         $riwayat = $this->Darah_model->get_riwayat_alergi_by_mr($mr);
-        $status_darah = $this->Darah_model->get_status_darah_terakhir($mr);
         
         $response = array(
             'nama' => $pasien['NAMA'],
@@ -88,7 +87,7 @@ class Darah extends MY_Controller {
             'gol_darah' => $pasien['gol_darah'],
             'id_gol_darah' => $pasien['id_gol_darah'],
             'riwayattrans1' => $riwayat ? $riwayat['riwayat_alergi'] : '',
-            'statusdarah' => $status_darah
+            'statusdarah' => 8  // Default status = selesai/tidak ada
         );
 
         echo json_encode($response);

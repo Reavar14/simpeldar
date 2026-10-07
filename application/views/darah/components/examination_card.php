@@ -1,140 +1,102 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
-<!-- ANALIS 1 + TUJUAN + HASIL PEMERIKSAAN + PERAWAT -->
-<div class="row g-2 mb-2">
-    <!-- Analis 1 -->
-    <div class="col-md-3">
-        <select name="analis"
-                id="analis"
-                class="form-select select2"
-                data-placeholder="Petugas Analis PTTD 1">
-            <option value="">&nbsp;</option>
-            <?php foreach ($analis as $a): ?>
-                <option value="<?php echo $a['id_analis']; ?>">
-                    <?php echo htmlspecialchars($a['nama_analis']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+
+<!-- ============================================================
+     CARD 3 - DATA KLINIS
+     ============================================================ -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-notes-medical text-primary me-2"></i> Data Klinis
+        </h5>
     </div>
-    <!-- Tujuan -->
-    <div class="col-md-3">
-        <select name="tujuan"
-                id="tujuan"
-                class="form-select select2"
-                data-placeholder="Tujuan">
-            <option value="">&nbsp;</option>
-            <?php foreach ($tujuan as $t): ?>
-                <option value="<?php echo $t['id_variabel']; ?>">
-                    <?php echo htmlspecialchars($t['variabel']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-    <!-- Hasil Pemeriksaan -->
-    <div class="col-md-3">
-        <select name="hasil_pemeriksaan"
-                id="hasil_pemeriksaan"
-                class="form-select select2"
-                data-placeholder="Hasil Pemeriksaan">
-            <option value="">&nbsp;</option>
-            <?php foreach ($hasil_pemeriksaan as $hp): ?>
-                <option value="<?php echo $hp['ID']; ?>">
-                    <?php echo htmlspecialchars($hp['DESKRIPSI']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-    <!-- Perawat -->
-    <div class="col-md-3">
-        <select name="perawat"
-                id="perawat"
-                class="form-select select2"
-                data-placeholder="Perawat">
-            <option value="">&nbsp;</option>
-            <?php foreach ($perawat as $p): ?>
-                <option value="<?php echo $p['id_perawat']; ?>">
-                    <?php echo htmlspecialchars($p['nama_perawat']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-</div>
-<!-- HISTORI DATABASE + GOLONGAN DARAH DISPLAY -->
-<div class="row g-2 mb-2">
-    <!-- Histori dari database -->
-    <div class="col-md-9">
-        <textarea
-            id="riwayattrans1"
-            name="riwayattrans1"
-            class="form-control"
-            rows="4"
-            placeholder="Histori Riwayat Alergi Transfusi dan Catatan"
-            readonly></textarea>
-    </div>
-    <!-- Golongan Darah Display -->
-    <div class="col-md-3">
-        <div class="goldar-display h-100 d-flex flex-column justify-content-start">
-            <div class="text-primary"
-                 style="font-size: 18px; margin-bottom: 5px;">
-                Golongan Darah :
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="diagnosa">Diagnosa</label>
+                <input type="text" name="diagnosa" id="diagnosa" class="form-control" placeholder="Diagnosa">
             </div>
-            <span class="goldarah pasien-goldarah fw-bolder"
-                  style="font-size: 3.5rem; line-height: 1.1;">
-            </span>
-            <span id="id-selected" class="small text-muted">
-            </span>
+            <div class="col-md-6">
+                <label class="form-label" for="alasan">Alasan Permintaan</label>
+                <input type="text" name="alasan" id="alasan" class="form-control" placeholder="Alasan Permintaan">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="kadar_hb">Kadar Hb</label>
+                <input type="text" name="kadar_hb" id="kadar_hb" class="form-control" placeholder="Kadar Hb">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="trombosit">Trombosit</label>
+                <input type="text" name="trombosit" id="trombosit" class="form-control" placeholder="Trombosit">
+            </div>
         </div>
     </div>
 </div>
-<!-- INPUT RIWAYAT ALERGI / CATATAN BARU -->
-<div class="row g-2 mb-2">
-    <div class="col-12">
-        <input type="text"
-               name="riwayattrans"
-               id="riwayattrans"
-               class="form-control"
-               placeholder="Riwayat Alergi Transfusi dan Catatan">
+
+<!-- ============================================================
+     CARD 5 - PEMERIKSAAN
+     ============================================================ -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-microscope text-primary me-2"></i> Pemeriksaan
+        </h5>
     </div>
-</div>
-<!-- NOTIF STATUS -->
-<input type="hidden"
-       name="notifsatus"
-       id="notifsatus">
-<!-- PEMISAH -->
-<hr>
-<!-- HASIL PEMERIKSAAN -->
-<div class="row g-2 mb-2 align-items-center">
-    <!-- Judul -->
-    <div class="col-md-3">
-        <div style="font-size: 18px; font-weight: bold; text-decoration: underline; color: #337ab7;">
-            HASIL PEMERIKSAAN:
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label" for="analis">Analis</label>
+                <select name="analis" id="analis" class="form-select select2" data-placeholder="Petugas Analis PTTD 1">
+                    <option value="">&nbsp;</option>
+                    <?php foreach ($analis as $a): ?>
+                        <option value="<?php echo $a['id_analis']; ?>"><?php echo htmlspecialchars($a['nama_analis']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="analis2">Analis 2</label>
+                <select name="analis2" id="analis2" class="form-select select2" data-placeholder="Petugas Analis PTTD 2">
+                    <option value="">&nbsp;</option>
+                    <?php foreach ($analis as $a): ?>
+                        <option value="<?php echo $a['id_analis']; ?>"><?php echo htmlspecialchars($a['nama_analis']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="perawat">Perawat</label>
+                <select name="perawat" id="perawat" class="form-select select2" data-placeholder="Perawat">
+                    <option value="">&nbsp;</option>
+                    <?php foreach ($perawat as $p): ?>
+                        <option value="<?php echo $p['id_perawat']; ?>"><?php echo htmlspecialchars($p['nama_perawat']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label" for="auto_kontrol">Auto Kontrol</label>
+                <select name="auto_kontrol" id="auto_kontrol" class="form-select select2" data-placeholder="Auto Kontrol">
+                    <option value="">&nbsp;</option>
+                    <?php foreach ($auto_kontrol as $ak): ?>
+                        <option value="<?php echo $ak['ID']; ?>"><?php echo htmlspecialchars($ak['DESKRIPSI']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="hasil_pemeriksaan">Hasil Pemeriksaan</label>
+                <select name="hasil_pemeriksaan" id="hasil_pemeriksaan" class="form-select select2" data-placeholder="Hasil Pemeriksaan">
+                    <option value="">&nbsp;</option>
+                    <?php foreach ($hasil_pemeriksaan as $hp): ?>
+                        <option value="<?php echo $hp['ID']; ?>"><?php echo htmlspecialchars($hp['DESKRIPSI']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label" for="status">Status</label>
+                <select name="status" id="status" class="form-select select2" data-placeholder="Pilih Status">
+                    <option value="">&nbsp;</option>
+                    <?php foreach ($status as $s): ?>
+                        <option value="<?php echo $s['ID']; ?>"><?php echo htmlspecialchars($s['DESKRIPSI']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
-    </div>
-    <!-- Analis 2 -->
-    <div class="col-md-3">
-        <select name="analis2"
-                id="analis2"
-                class="form-select select2"
-                data-placeholder="Petugas Analis PTTD 2">
-            <option value="">&nbsp;</option>
-            <?php foreach ($analis as $a): ?>
-                <option value="<?php echo $a['id_analis']; ?>">
-                    <?php echo htmlspecialchars($a['nama_analis']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </div>
-    <!-- Auto Kontrol -->
-    <div class="col-md-2">
-        <select name="auto_kontrol"
-                id="auto_kontrol"
-                class="form-select select2"
-                data-placeholder="Auto Kontrol">
-            <option value="">&nbsp;</option>
-            <?php foreach ($auto_kontrol as $ak): ?>
-                <option value="<?php echo $ak['ID']; ?>">
-                    <?php echo htmlspecialchars($ak['DESKRIPSI']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
     </div>
 </div>
