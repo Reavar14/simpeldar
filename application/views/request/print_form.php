@@ -329,7 +329,11 @@ $d = isset($d) ? $d : array();
                             $min = fd_norm($d['minor_' . $i] ?? null);
                             $exp = fd_safe_date($d['exp_' . $i] ?? null);
 
+                            // Fallback chain: kantong-specific → patient goldarah → empty
                             $gd = fd_norm($d['PRO_DESKDAR_' . $i] ?? null);
+                            if ($gd === '') {
+                                $gd = fd_norm($d['gol_darah'] ?? null);
+                            }
 
                             if ($nk === '') {
                                 $tgl = ''; $gd = ''; $vol = ''; $may = ''; $min = ''; $exp = '';

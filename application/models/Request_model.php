@@ -316,7 +316,7 @@ class Request_model extends CI_Model {
 
         $case_pro_deskdar = array();
         for ($i = 1; $i <= 12; $i++) {
-            $case_pro_deskdar[] = "CASE WHEN CHAR_LENGTH(TRIM(IFNULL(pd.no_kantong_{$i}, ''))) = 11 AND kl.NOMOR_KL{$i} IS NOT NULL AND TRIM(kl.NOMOR_KL{$i}) <> '' THEN kl.GOLDAR_KL{$i} ELSE '' END AS PRO_DESKDAR_{$i}";
+            $case_pro_deskdar[] = "CASE WHEN CHAR_LENGTH(TRIM(IFNULL(pd.no_kantong_{$i}, ''))) = 11 AND kl.NOMOR_KL{$i} IS NOT NULL AND TRIM(kl.NOMOR_KL{$i}) <> '' THEN kl.GOLDAR_KL{$i} ELSE COALESCE(NULLIF(pd.goldarah, ''), '') END AS PRO_DESKDAR_{$i}";
         }
 
         $sql = "SELECT pd.no_permintaan,
@@ -324,7 +324,7 @@ class Request_model extends CI_Model {
             pd.mr, pd.nama, rjk.DESKRIPSI jenis_kelamin,
             DATE_FORMAT(pd.tgl_lahir, '%d-%m-%Y') tgl_lahir,
             YEAR(CURDATE())-YEAR(pd.tgl_lahir) usia,
-            rgd.DESKRIPSI gol_darah,
+            pd.goldarah, rgd.DESKRIPSI gol_darah,
             jd.nama_jenis jenis_darah, j.nama_jenis bufycoat,
             pd.volume,
             DATE_FORMAT(pd.tgl_diperlukan, '%d-%m-%Y') tgl_diperlukan,
@@ -471,7 +471,7 @@ class Request_model extends CI_Model {
 SELECT
     pd.no_permintaan, pd.mr, pd.nama, rjk.DESKRIPSI AS jenis_kelamin, DATE_FORMAT(pd.tgl_lahir, '%d-%m-%Y') AS tgl_lahir,
     pd.ruangan, pd.tgl_minta, pd.jenis_darah, pd.buffycoat, pd.volume, pd.tgl_diperlukan, pd.diagnosa, pd.alasan,
-    pd.kadar_hb, pd.trombosit, rgd.DESKRIPSI AS gol_darah, rstatus.DESKRIPSI AS status_proses, pd.status,
+    pd.kadar_hb, pd.trombosit, pd.goldarah, rgd.DESKRIPSI AS gol_darah, rstatus.DESKRIPSI AS status_proses, pd.status,
     pd.pengambil_darah, pd.hasil_pemeriksaan, pd.dpjp, pd.riwayattrans, klp.kelengkapan,
     CONCAT(IF(p.GELAR_DEPAN = '' OR p.GELAR_DEPAN IS NULL, '', CONCAT(p.GELAR_DEPAN, '. ')), UPPER(p.NAMA), IF(p.GELAR_BELAKANG = '' OR p.GELAR_BELAKANG IS NULL, '', CONCAT(', ', p.GELAR_BELAKANG))) AS nama_dokter,
     pd.analis,
