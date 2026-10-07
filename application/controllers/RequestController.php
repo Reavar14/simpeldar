@@ -436,8 +436,11 @@ class RequestController extends MY_Controller {
 
         // === Upsert darah.kantong_luar ===
         $goldar_kantong = array();
+        $new_goldarah_id = $this->norm_post('goldarah'); // ID baru dari form (pd.goldarah)
         for ($i = 1; $i <= 12; $i++) {
-            $goldar_kantong[$i] = $this->input->post('goldaroto' . $i);
+            $posted_goldar = $this->input->post('goldaroto' . $i);
+            // Sinkronisasi: jika pd.goldarah berubah, pakai nilai baru untuk semua kantong
+            $goldar_kantong[$i] = $new_goldarah_id ?? $posted_goldar;
         }
 
         // Transaction: rollback otomatis jika ada query gagal

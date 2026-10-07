@@ -30,7 +30,7 @@ $tanggalIni = strtr(date('l'), $hariId) . ', ' . date('d') . ' ' . strtr(date('F
 /* --- URL aksi --- */
 $bonUrl    = base_url('index.php/cetakan/bonminta?id=');
 $detailUrl = base_url('index.php/requestcontroller/detail/');
-$editUrl   = base_url('index.php/darah/edit_permintaan?id=');
+$editUrl   = base_url('index.php/requestcontroller/edit/');
 
 /* --- Helper: badge goldar sesuai halaman Permintaan --- */
 if (!function_exists('dash_goldar_badge')) {
