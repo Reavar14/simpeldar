@@ -85,7 +85,7 @@
                 try { obj = JSON.parse(data); } catch (e) { return; }
 
                 /* Volume */
-                var $cc = $('#cc' + i + 'edit');
+                var $cc = $('#cc' + i);
                 if (obj.cc && obj.cc !== '' && obj.cc !== '-') {
                     $cc.val(obj.cc);
                 } else if (!isKantongLuar && (!obj.cc || obj.cc === '' || obj.cc === '-')) {
@@ -93,7 +93,7 @@
                 }
 
                 /* Expired date */
-                var $exp = $('#exp' + i + 'edit');
+                var $exp = $('#exp' + i);
                 if (obj.exp && obj.exp !== '' && obj.exp !== '-') {
                     $exp.val(obj.exp);
                 } else if (!isKantongLuar && (!obj.exp || obj.exp === '' || obj.exp === '-')) {
@@ -101,25 +101,19 @@
                 }
 
                 /* Golongan darah kantong */
-                var $goldar = $('#goldaroto' + i + 'edit');
-                var $goldarHidden = $('#goldaroto' + i + '_hidden');
+                var $goldar = $('#goldaroto' + i);
                 if (obj.deskdar && obj.deskdar !== '-') {
                     var existingGoldar = $goldar.val();
                     if (forceRefresh || isChangedNomer || !existingGoldar || existingGoldar.trim() === '' || existingGoldar.trim() === '-') {
                         $goldar.val(obj.deskdar);
-                        $goldarHidden.val(obj.deskdar);
                         $goldar.prop('readonly', true);
                     } else {
-                        $goldarHidden.val(existingGoldar);
                         $goldar.prop('readonly', true);
                     }
                 } else {
                     if (!$goldar.val() || $goldar.val().trim() === '') {
                         $goldar.val('');
-                        $goldarHidden.val('');
                         $goldar.prop('readonly', false);
-                    } else {
-                        $goldarHidden.val($goldar.val());
                     }
                 }
 
@@ -300,7 +294,7 @@
         /* Cek kembali golongan kantong setelah lookup awal selesai */
         setTimeout(function () {
             for (var i = 1; i <= 12; i++) {
-                var $goldar = $('#goldaroto' + i + 'edit');
+                var $goldar = $('#goldaroto' + i);
                 if ($goldar.length && $goldar.val().trim() !== '') {
                     cekGoldarKantong(i);
                 }

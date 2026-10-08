@@ -28,7 +28,8 @@ $bulanId = array(
 $tanggalIni = strtr(date('l'), $hariId) . ', ' . date('d') . ' ' . strtr(date('F'), $bulanId) . ' ' . date('Y');
 
 /* --- URL aksi --- */
-$bonUrl = base_url('index.php/requestcontroller/cetak_bon_darah?id=');
+$bonUrl = 'http://192.168.7.138/cetakanhnf/simpeldar/admin/bonminta.php?id=';
+$formUrl = 'http://192.168.7.241/cetakanhnf/simpeldar_new/CetakFormDarah.php?id=';
 $detailUrl = base_url('index.php/requestcontroller/detail/');
 $editUrl   = base_url('index.php/requestcontroller/edit/');
 

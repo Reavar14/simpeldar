@@ -259,6 +259,18 @@ class RequestController extends MY_Controller {
         $data['d']         = $this->Request_model->get_edit_data($no_permintaan);
         $data['edit_mode'] = $mode;
 
+        // Normalize tglkantong1-12: replace empty/NULL/zero dates with current datetime for display
+        if (!empty($data['d']) && is_array($data['d'])) {
+            $now = date('Y-m-d H:i:s');
+            for ($i = 1; $i <= 12; $i++) {
+                $key = 'tglkantong' . $i;
+                $val = $data['d'][$key] ?? '';
+                if ($val === '' || $val === null || $val === '0000-00-00 00:00:00' || $val === '0000-00-00') {
+                    $data['d'][$key] = $now;
+                }
+            }
+        }
+
         // Dropdown referensi (migrasi query dropdown dari edit_permintaan.php)
         $this->load->model('Darah_model');
         $data['goldarah']          = $this->Darah_model->get_golongan_darah();
@@ -417,7 +429,12 @@ class RequestController extends MY_Controller {
             $data_pesan['no_kantong_' . $i] = $no_kantong[$i];
             $data_pesan['volume_' . $i]     = $this->input->post('volume_' . $i);
             $data_pesan['exp_' . $i]        = $this->input->post('exp_' . $i);
-            $data_pesan['tglkantong' . $i]  = $this->norm_post('tglkantong' . $i);
+            
+            $tglkantong_val = $this->norm_post('tglkantong' . $i);
+            if ($tglkantong_val !== null) {
+                $data_pesan['tglkantong' . $i] = $tglkantong_val;
+            }
+            
             $data_pesan['myr_' . $i]        = $this->input->post('myr_' . $i);
             $data_pesan['mnr_' . $i]        = $this->input->post('mnr_' . $i);
         }

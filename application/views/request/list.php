@@ -7,8 +7,8 @@ window.REQUEST_LIST_CONFIG = {
     ajaxUrl: "<?php echo base_url('index.php/requestcontroller/ajax_list'); ?>",
     editUrl: "<?php echo base_url('index.php/requestcontroller/edit/'); ?>",
     detailUrl: "<?php echo base_url('index.php/requestcontroller/detail/'); ?>",
-    bonUrl: "<?php echo base_url('index.php/requestcontroller/cetak_bon_darah?id='); ?>",
-    formUrl: "<?php echo base_url('index.php/requestcontroller/cetak_form_darah?id='); ?>",
+    bonUrl: "http://192.168.7.138/cetakanhnf/simpeldar/admin/bonminta.php?id=",
+    formUrl: "http://192.168.7.241/cetakanhnf/simpeldar_new/CetakFormDarah.php?id=",
     detailDarahUrl: "<?php echo base_url('index.php/requestcontroller/print_detail_darah/'); ?>",
     hasilUrl: "<?php echo base_url('index.php/requestcontroller/print_hasil_pemeriksaan/'); ?>",
     terimaUrl: "<?php echo base_url('index.php/requestcontroller/mark_received'); ?>"

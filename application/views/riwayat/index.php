@@ -15,7 +15,7 @@
 window.RIWAYAT_CONFIG = {
     ajaxUrl: "<?php echo base_url('index.php/riwayat/ajax_list'); ?>",
     editUrl: "<?php echo base_url('index.php/requestcontroller/edit/'); ?>",
-    formUrl: "<?php echo base_url('index.php/requestcontroller/print_form/'); ?>"
+    formUrl: "http://192.168.7.241/cetakanhnf/simpeldar_new/CetakFormDarah.php?id="
 };
 </script>
 <script src="<?php echo base_url('assets/js/riwayat.js'); ?>"></script>

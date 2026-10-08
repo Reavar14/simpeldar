@@ -218,7 +218,7 @@ $level = $CI->session->userdata('level');
 window.RAWAT_INAP_CONFIG = {
     ajaxUrl: "<?php echo base_url('index.php/darah/ajax_list_ri'); ?>",
     detailUrl: "<?php echo base_url('index.php/requestcontroller/detail/'); ?>",
-    bonUrl: "<?php echo base_url('index.php/requestcontroller/print_bon/'); ?>",
+    bonUrl: "http://192.168.7.138/cetakanhnf/simpeldar/admin/bonminta.php?id=",
     hasilUrl: "<?php echo base_url('index.php/requestcontroller/print_hasil_pemeriksaan/'); ?>",
     editUrl: "<?php echo base_url('index.php/requestcontroller/edit_rawat_inap/'); ?>"
 };

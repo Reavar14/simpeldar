@@ -598,16 +598,6 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
             </div>
         </div>
 
-        <!-- KELENGKAPAN -->
-        <div class="row g-2 mb-2">
-            <div class="col-12">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="kelengkapan" id="kelengkapan" value="1"<?php if (($d['kelengkapan'] ?? 0) == 1) echo ' checked'; ?><?php echo $dis; ?>>
-                    <label class="form-check-label" for="kelengkapan">Sudah Lengkap</label>
-                </div>
-            </div>
-        </div>
-
         <!-- ==================== 3. HASIL PEMERIKSAAN (examination_card) ==================== -->
         <!-- ANALIS 1 + TUJUAN + HASIL PEMERIKSAAN + PERAWAT -->
         <div class="row g-2 mb-2">
@@ -696,15 +686,21 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
                 </div>
             </div>
         </div>
-        <!-- INPUT RIWAYAT ALERGI / CATATAN BARU -->
-        <div class="row g-2 mb-2">
-            <div class="col-12">
+        <!-- INPUT RIWAYAT ALERGI / CATATAN BARU + KELENGKAPAN -->
+        <div class="row g-2 mb-2 align-items-center">
+            <div class="col-md-10">
                 <input type="text"
                        name="riwayattrans"
                        id="riwayattrans"
                        class="form-control"
                        value="<?php echo htmlspecialchars($d['riwayattrans'] ?? ''); ?>"
                        placeholder="Riwayat Alergi Transfusi dan Catatan">
+            </div>
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="kelengkapan" id="kelengkapan" value="1"<?php if (($d['kelengkapan'] ?? 0) == 1) echo ' checked'; ?><?php echo $dis; ?>>
+                    <label class="form-check-label" for="kelengkapan">Sudah Lengkap</label>
+                </div>
             </div>
         </div>
         <!-- NOTIF STATUS -->
@@ -865,11 +861,10 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
 window.REQUEST_EDIT_CONFIG = {
     autofillUrl: "<?php echo base_url('index.php/darah/autofill_pasien'); ?>",
     lookupUrl:   "<?php echo base_url('index.php/darah/lookup_kantong'); ?>",
-    printFormUrl: "<?php echo base_url('index.php/requestcontroller/print_form/'); ?>",
+    printFormUrl: "http://192.168.7.241/cetakanhnf/simpeldar_new/CetakFormDarah.php?id=",
     editMode:    "<?php echo htmlspecialchars($edit_mode); ?>"
 };
 </script>
-<script src="<?php echo base_url('assets/js/form-darah.js'); ?>?v=20241006"></script>
 <script src="<?php echo base_url('assets/js/request-edit.js'); ?>" defer></script>
 
 <?php else: ?>
