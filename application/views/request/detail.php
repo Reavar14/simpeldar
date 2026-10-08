@@ -88,7 +88,8 @@ function normalize_display_text($value) {
 <script>
 window.REQUEST_DETAIL_CONFIG = {
     terimaUrl: "<?php echo base_url('index.php/requestcontroller/mark_received'); ?>",
-    bonUrl: "<?php echo base_url('index.php/requestcontroller/print_bon/'); ?>"
+    bonUrl: "<?php echo base_url('index.php/requestcontroller/print_bon/'); ?>",
+    prosesUrl: "<?php echo base_url('index.php/requestcontroller/list'); ?>"
 };
 </script>
 <script src="<?php echo base_url('assets/js/request-detail.js'); ?>" defer></script>

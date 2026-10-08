@@ -37,10 +37,10 @@
                         if (ok) {
                             if (window.SwalHelper) {
                                 SwalHelper.success('Diterima', 'Sampel darah berhasil diterima.').then(function () {
-                                    location.reload();
+                                    window.location.href = cfg.prosesUrl;
                                 });
                             } else {
-                                location.reload();
+                                window.location.href = cfg.prosesUrl;
                             }
                         } else {
                             if (window.SwalHelper) SwalHelper.error('Gagal', 'Terjadi kesalahan saat menyimpan.');
