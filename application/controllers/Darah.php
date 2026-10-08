@@ -407,7 +407,7 @@ class Darah extends MY_Controller {
             redirect('darah/form?error=1');
         } else {
             // Success
-            redirect('darah/form?success=1');
+            redirect('dashboard');
         }
     }
 
