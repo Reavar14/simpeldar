@@ -28,7 +28,7 @@ $bulanId = array(
 $tanggalIni = strtr(date('l'), $hariId) . ', ' . date('d') . ' ' . strtr(date('F'), $bulanId) . ' ' . date('Y');
 
 /* --- URL aksi --- */
-$bonUrl    = base_url('index.php/cetakan/bonminta?id=');
+$bonUrl = base_url('index.php/requestcontroller/cetak_bon_darah?id=');
 $detailUrl = base_url('index.php/requestcontroller/detail/');
 $editUrl   = base_url('index.php/requestcontroller/edit/');
 

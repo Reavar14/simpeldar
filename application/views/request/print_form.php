@@ -104,7 +104,7 @@ $d = isset($d) ? $d : array();
         }
         /* Special field heights */
         .fld-tall { height: 50pt; line-height: 50pt; }
-        .fld-tall-top { height: 50pt; line-height: 1.2; padding: 3px; vertical-align: top; white-space: pre-wrap; }
+        .fld-tall-top { height: 50pt; line-height: 11px; padding: 3px; vertical-align: top; white-space: pre-line; overflow: hidden; }
         /* Goldar big */
         .goldar-big {
             position: absolute;

@@ -598,6 +598,16 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
             </div>
         </div>
 
+        <!-- KELENGKAPAN -->
+        <div class="row g-2 mb-2">
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="kelengkapan" id="kelengkapan" value="1"<?php if (($d['kelengkapan'] ?? 0) == 1) echo ' checked'; ?><?php echo $dis; ?>>
+                    <label class="form-check-label" for="kelengkapan">Sudah Lengkap</label>
+                </div>
+            </div>
+        </div>
+
         <!-- ==================== 3. HASIL PEMERIKSAAN (examination_card) ==================== -->
         <!-- ANALIS 1 + TUJUAN + HASIL PEMERIKSAAN + PERAWAT -->
         <div class="row g-2 mb-2">
