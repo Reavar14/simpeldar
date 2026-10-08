@@ -184,7 +184,17 @@ class Darah extends MY_Controller {
             $no_kantong[$i]      = $this->input->post('no_kantong_' . $i);
             $volume_kantong[$i]  = $this->input->post('volume_' . $i);
             $exp_kantong[$i]     = $this->input->post('exp_' . $i);
-            $tglkantong[$i]      = $this->input->post('tglkantong' . $i);
+            
+            $no_kantong_val = trim((string)$no_kantong[$i]);
+            if ($no_kantong_val !== '') {
+                $tglkantong_posted = $this->input->post('tglkantong' . $i);
+                $tglkantong[$i] = ($tglkantong_posted !== null && $tglkantong_posted !== '' && $tglkantong_posted !== false)
+                    ? $tglkantong_posted
+                    : date('Y-m-d H:i:s');
+            } else {
+                $tglkantong[$i] = null;
+            }
+            
             $myr_kantong[$i]     = $this->input->post('myr_' . $i);
             $mnr_kantong[$i]     = $this->input->post('mnr_' . $i);
             $tgl_serah[$i]       = $this->input->post('tgl_serah_' . $i);

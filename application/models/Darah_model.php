@@ -211,36 +211,79 @@ class Darah_model extends CI_Model {
      *
      * Catatan: native (dataproduksi.php) mengambil CC & TGL_EXPIRED dari
      * db_darah.tb_produksi/aftap (server remote). Lokal hanya punya schema
-     * `darah` dan darah.kantong_luar tidak memiliki kolom CC/EXP_KL,
-     * sehingga cc & exp dikembalikan kosong (frontend menampilkan '-').
+     * `darah` dan darah.kantong_luar tidak memiliki kolom CC/EXP_KL.
+     * Exp date diambil dari darah.pesan_darah.exp_X jika kantong sudah pernah dipakai.
      */
     public function get_kantong_by_nomor($nomor_kantong)
     {
+        // Cari kantong di kantong_luar dan tentukan posisi (1-12)
         $sql = "SELECT 
-                NOMOR_KL1 as nomor, GOLDAR_KL1 as goldar, STATUS
-                FROM darah.kantong_luar 
-                WHERE NOMOR_KL1 = ? OR NOMOR_KL2 = ? OR NOMOR_KL3 = ? OR 
-                      NOMOR_KL4 = ? OR NOMOR_KL5 = ? OR NOMOR_KL6 = ? OR 
-                      NOMOR_KL7 = ? OR NOMOR_KL8 = ? OR NOMOR_KL9 = ? OR 
-                      NOMOR_KL10 = ? OR NOMOR_KL11 = ? OR NOMOR_KL12 = ?
+                kl.no_permintaan,
+                CASE 
+                    WHEN kl.NOMOR_KL1 = ? THEN 1
+                    WHEN kl.NOMOR_KL2 = ? THEN 2
+                    WHEN kl.NOMOR_KL3 = ? THEN 3
+                    WHEN kl.NOMOR_KL4 = ? THEN 4
+                    WHEN kl.NOMOR_KL5 = ? THEN 5
+                    WHEN kl.NOMOR_KL6 = ? THEN 6
+                    WHEN kl.NOMOR_KL7 = ? THEN 7
+                    WHEN kl.NOMOR_KL8 = ? THEN 8
+                    WHEN kl.NOMOR_KL9 = ? THEN 9
+                    WHEN kl.NOMOR_KL10 = ? THEN 10
+                    WHEN kl.NOMOR_KL11 = ? THEN 11
+                    WHEN kl.NOMOR_KL12 = ? THEN 12
+                END AS posisi,
+                CASE 
+                    WHEN kl.NOMOR_KL1 = ? THEN kl.GOLDAR_KL1
+                    WHEN kl.NOMOR_KL2 = ? THEN kl.GOLDAR_KL2
+                    WHEN kl.NOMOR_KL3 = ? THEN kl.GOLDAR_KL3
+                    WHEN kl.NOMOR_KL4 = ? THEN kl.GOLDAR_KL4
+                    WHEN kl.NOMOR_KL5 = ? THEN kl.GOLDAR_KL5
+                    WHEN kl.NOMOR_KL6 = ? THEN kl.GOLDAR_KL6
+                    WHEN kl.NOMOR_KL7 = ? THEN kl.GOLDAR_KL7
+                    WHEN kl.NOMOR_KL8 = ? THEN kl.GOLDAR_KL8
+                    WHEN kl.NOMOR_KL9 = ? THEN kl.GOLDAR_KL9
+                    WHEN kl.NOMOR_KL10 = ? THEN kl.GOLDAR_KL10
+                    WHEN kl.NOMOR_KL11 = ? THEN kl.GOLDAR_KL11
+                    WHEN kl.NOMOR_KL12 = ? THEN kl.GOLDAR_KL12
+                END AS goldar
+                FROM darah.kantong_luar kl
+                WHERE kl.NOMOR_KL1 = ? OR kl.NOMOR_KL2 = ? OR kl.NOMOR_KL3 = ? OR 
+                      kl.NOMOR_KL4 = ? OR kl.NOMOR_KL5 = ? OR kl.NOMOR_KL6 = ? OR 
+                      kl.NOMOR_KL7 = ? OR kl.NOMOR_KL8 = ? OR kl.NOMOR_KL9 = ? OR 
+                      kl.NOMOR_KL10 = ? OR kl.NOMOR_KL11 = ? OR kl.NOMOR_KL12 = ?
                 LIMIT 1";
-        $params = array_fill(0, 12, $nomor_kantong);
+
+        // 12 untuk CASE posisi + 12 untuk CASE goldar + 12 untuk WHERE = 36 parameter
+        $params = array_fill(0, 36, $nomor_kantong);
         $row = $this->db->query($sql, $params)->row_array();
 
-        if ($row) {
+        if (!$row) {
             return array(
                 'cc'      => '',
                 'exp'     => '',
-                'deskdar' => $row['goldar'] ?? '-',
-                'goldaroto' => $row['goldar'] ?? ''
+                'deskdar' => '-',
+                'goldaroto' => ''
             );
+        }
+
+        // Ambil exp date dari pesan_darah berdasarkan posisi
+        $exp = '';
+        $posisi = (int)$row['posisi'];
+        if ($posisi >= 1 && $posisi <= 12 && !empty($row['no_permintaan'])) {
+            $exp_col = 'exp_' . $posisi;
+            $sql_exp = "SELECT $exp_col FROM darah.pesan_darah WHERE no_permintaan = ? LIMIT 1";
+            $row_exp = $this->db->query($sql_exp, array($row['no_permintaan']))->row_array();
+            if ($row_exp && !empty($row_exp[$exp_col]) && $row_exp[$exp_col] !== '0000-00-00') {
+                $exp = $row_exp[$exp_col];
+            }
         }
 
         return array(
             'cc'      => '',
-            'exp'     => '',
-            'deskdar' => '-',
-            'goldaroto' => ''
+            'exp'     => $exp,
+            'deskdar' => $row['goldar'] ?? '-',
+            'goldaroto' => $row['goldar'] ?? ''
         );
     }
 

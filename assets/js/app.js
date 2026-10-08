@@ -429,7 +429,8 @@
                     enableTime: true,
                     dateFormat: 'Y-m-d H:i:S',
                     altFormat: 'd/m/Y H:i:S',
-                    time_24hr: true
+                    time_24hr: true,
+                    minuteIncrement: 1
                 });
             }
         });
@@ -442,7 +443,8 @@
                     enableTime: true,
                     dateFormat: 'H:i:S',
                     altFormat: 'H:i:S',
-                    time_24hr: true
+                    time_24hr: true,
+                    minuteIncrement: 1
                 });
             }
         });

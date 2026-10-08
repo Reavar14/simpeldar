@@ -80,7 +80,7 @@
 <!-- SweetAlert2 -->
 <script src="<?php echo base_url('assets/vendor/sweetalert/js/sweetalert2.all.min.js'); ?>"></script>
 <!-- Custom App JS -->
-<script src="<?php echo base_url('assets/js/app.js'); ?>"></script>
+<script src="<?php echo base_url('assets/js/app.js?v=20261008'); ?>"></script>
 
 </body>
 </html>
