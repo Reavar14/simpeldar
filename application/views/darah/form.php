@@ -114,15 +114,14 @@
     font-size: 13px;
     font-weight: 600;
 }
-/* TABEL KANTONG */
+/* TABEL KANTONG - Responsive */
 .kantong-table-wrapper {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: hidden;
     margin-top: 5px;
 }
 .kantong-table {
     width: 100%;
-    min-width: 1100px;
     table-layout: fixed;
     border-collapse: collapse;
     font-size: 10px;
@@ -135,11 +134,16 @@
     vertical-align: middle;
     white-space: nowrap;
     font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .kantong-table td {
     padding: 3px;
     border: 1px solid #ccc;
     vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 .kantong-table tbody tr:nth-child(odd) {
     background: #f8f8f8;
@@ -148,13 +152,17 @@
     background: #fff;
 }
 .kantong-table input,
-.kantong-table select {
+.kantong-table select,
+.kantong-table .form-control,
+.kantong-table .form-select {
     width: 100%;
+    max-width: 100%;
     height: 28px;
     min-height: 28px;
     padding: 2px 4px;
     font-size: 10px;
     border-radius: 2px;
+    box-sizing: border-box;
 }
 .kantong-table .select2-container {
     width: 100% !important;
@@ -181,36 +189,27 @@
 .select2-selection__arrow {
     height: 26px !important;
 }
-/* Lebar mengikuti grid native */
+/* Lebar kolom proportional (%) - total 100% */
 .kantong-table th:nth-child(1),
-.kantong-table td:nth-child(1) { width: 14%; }
-
+.kantong-table td:nth-child(1) { width: 12%; }  /* No. Kantong */
 .kantong-table th:nth-child(2),
-.kantong-table td:nth-child(2) { width: 5%; }
-
+.kantong-table td:nth-child(2) { width: 5%; }   /* Gol. Darah */
 .kantong-table th:nth-child(3),
-.kantong-table td:nth-child(3) { width: 12%; }
-
+.kantong-table td:nth-child(3) { width: 10%; }  /* Exp Date */
 .kantong-table th:nth-child(4),
-.kantong-table td:nth-child(4) { width: 15%; }
-
+.kantong-table td:nth-child(4) { width: 12%; }  /* Tgl. Input */
 .kantong-table th:nth-child(5),
-.kantong-table td:nth-child(5) { width: 6%; }
-
+.kantong-table td:nth-child(5) { width: 6%; }   /* Volume */
 .kantong-table th:nth-child(6),
-.kantong-table td:nth-child(6) { width: 8%; }
-
+.kantong-table td:nth-child(6) { width: 8%; }   /* MAYOR */
 .kantong-table th:nth-child(7),
-.kantong-table td:nth-child(7) { width: 8%; }
-
+.kantong-table td:nth-child(7) { width: 8%; }   /* MINOR */
 .kantong-table th:nth-child(8),
-.kantong-table td:nth-child(8) { width: 16%; }
-
+.kantong-table td:nth-child(8) { width: 12%; }  /* Tgl. Serah */
 .kantong-table th:nth-child(9),
-.kantong-table td:nth-child(9) { width: 7%; }
-
+.kantong-table td:nth-child(9) { width: 9%; }   /* Petugas Serah */
 .kantong-table th:nth-child(10),
-.kantong-table td:nth-child(10) { width: 7%; }
+.kantong-table td:nth-child(10) { width: 9%; }  /* Petugas Terima */
 /* Tombol */
 .form-darah-native .form-action {
     margin-top: 15px;

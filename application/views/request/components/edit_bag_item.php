@@ -7,6 +7,7 @@ $dis = $is_limited ? ' disabled' : '';
 $serah_key  = ($i === 1) ? 'PETUGAS_SERAH'  : 'PETUGAS_SERAH_' . $i;
 $terima_key = ($i === 1) ? 'PETUGAS_TERIMA' : 'PETUGAS_TERIMA_' . $i;
 $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
+$perawat_key = ($i === 1) ? 'PERAWAT_TERIMA' : 'PERAWAT_TERIMA_' . $i;
 ?>
 
 <!-- Kantong #<?php echo $i; ?> -->
@@ -108,24 +109,35 @@ $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
                            placeholder="Tgl Serah">
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label" for="petugas_serah_edit_<?php echo $i; ?>">Petugas Serah</label>
                     <input type="text"
                            name="petugas_serah_edit_<?php echo $i; ?>"
                            id="petugas_serah_edit_<?php echo $i; ?>"
                            class="form-control form-control-sm"
                            value="<?php echo htmlspecialchars($d[$serah_key]); ?>"
-                           placeholder="Petugas Yang Menyerahkan"<?php echo $ro; ?>>
+                           placeholder="Petugas Yang Menyerahkan">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label" for="petugas_terima_edit_<?php echo $i; ?>">Petugas Terima</label>
                     <input type="text"
                            name="petugas_terima_edit_<?php echo $i; ?>"
                            id="petugas_terima_edit_<?php echo $i; ?>"
                            class="form-control form-control-sm"
                            value="<?php echo htmlspecialchars($d[$terima_key]); ?>"
-                           placeholder="Petugas Yang Menerima"<?php echo $ro; ?>>
+                           placeholder="Petugas Yang Menerima">
                 </div>
+                <?php if ($is_limited): ?>
+                <div class="col-md-4">
+                    <label class="form-label" for="perawat_edit_<?php echo $i; ?>">Perawat</label>
+                    <input type="text"
+                           name="perawat_edit_<?php echo $i; ?>"
+                           id="perawat_edit_<?php echo $i; ?>"
+                           class="form-control form-control-sm"
+                           value="<?php echo htmlspecialchars($d[$perawat_key] ?? ''); ?>"
+                           placeholder="Perawat">
+                </div>
+<?php endif; ?>
             </div>
         </div>
     </div>

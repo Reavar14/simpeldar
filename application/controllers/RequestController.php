@@ -271,6 +271,17 @@ class RequestController extends MY_Controller {
             }
         }
 
+        // Load perawat_terima data for limited_edit mode
+        if ($mode === 'limited_edit') {
+            $perawat_terima = $this->Request_model->get_perawat_terima($no_permintaan);
+            if ($perawat_terima) {
+                for ($i = 1; $i <= 12; $i++) {
+                    $key = ($i === 1) ? 'PERAWAT_TERIMA' : 'PERAWAT_TERIMA_' . $i;
+                    $data['d'][$key] = $perawat_terima[$key] ?? '';
+                }
+            }
+        }
+
         // Dropdown referensi (migrasi query dropdown dari edit_permintaan.php)
         $this->load->model('Darah_model');
         $data['goldarah']          = $this->Darah_model->get_golongan_darah();
@@ -346,7 +357,7 @@ class RequestController extends MY_Controller {
 
     /**
      * Update terbatas (limited_edit).
-     * Hanya tgl_diperlukan & TGL_SERAH[n] yang diubah.
+     * Hanya tgl_diperlukan, TGL_SERAH[n], PETUGAS_SERAH[n], PETUGAS_TERIMA[n], PERAWAT_TERIMA[n] yang diubah.
      */
     private function _update_limited($no_permintaan, $userLogin, $tgl_edit)
     {
@@ -358,13 +369,25 @@ class RequestController extends MY_Controller {
 
         $data_pst = array();
         for ($i = 1; $i <= 12; $i++) {
-            $tgl_col = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
-            $data_pst[$tgl_col] = $this->norm_post('tgl_serah_edit_' . $i);
+            $serah_col  = ($i === 1) ? 'PETUGAS_SERAH'  : 'PETUGAS_SERAH_'  . $i;
+            $terima_col = ($i === 1) ? 'PETUGAS_TERIMA' : 'PETUGAS_TERIMA_' . $i;
+            $tgl_col    = ($i === 1) ? 'TGL_SERAH'      : 'TGL_SERAH' . $i;
+
+            $data_pst[$serah_col]  = $this->input->post('petugas_serah_edit_' . $i);
+            $data_pst[$terima_col] = $this->input->post('petugas_terima_edit_' . $i);
+            $data_pst[$tgl_col]    = $this->norm_post('tgl_serah_edit_' . $i);
+        }
+
+        $data_perawat = array();
+        for ($i = 1; $i <= 12; $i++) {
+            $perawat_col = ($i === 1) ? 'PERAWAT_TERIMA' : 'PERAWAT_TERIMA_' . $i;
+            $data_perawat[$perawat_col] = $this->input->post('perawat_edit_' . $i);
         }
 
         $this->db->trans_start();
         $this->Request_model->update_pesan_darah($no_permintaan, $data_pesan);
         $this->Request_model->update_petugas_serah_terima($no_permintaan, $data_pst);
+        $this->Request_model->save_perawat_terima($no_permintaan, $data_perawat);
         $this->db->trans_complete();
     }
 

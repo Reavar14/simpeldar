@@ -162,15 +162,14 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
         font-size: 13px;
         font-weight: 600;
     }
-    /* TABEL KANTONG */
+    /* TABEL KANTONG - Responsive */
     .kantong-table-wrapper {
         width: 100%;
-        overflow-x: auto;
+        overflow-x: hidden;
         margin-top: 5px;
     }
     .kantong-table {
         width: 100%;
-        min-width: 1100px;
         table-layout: fixed;
         border-collapse: collapse;
         font-size: 10px;
@@ -183,11 +182,16 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
         vertical-align: middle;
         white-space: nowrap;
         font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .kantong-table td {
         padding: 3px;
         border: 1px solid #ccc;
         vertical-align: middle;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .kantong-table tbody tr:nth-child(odd) {
         background: #f8f8f8;
@@ -196,13 +200,17 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
         background: #fff;
     }
     .kantong-table input,
-    .kantong-table select {
+    .kantong-table select,
+    .kantong-table .form-control,
+    .kantong-table .form-select {
         width: 100%;
+        max-width: 100%;
         height: 28px;
         min-height: 28px;
         padding: 2px 4px;
         font-size: 10px;
         border-radius: 2px;
+        box-sizing: border-box;
     }
     .kantong-table .select2-container {
         width: 100% !important;
@@ -229,36 +237,52 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
     .select2-selection__arrow {
         height: 26px !important;
     }
-    /* Lebar mengikuti grid native */
-    .kantong-table th:nth-child(1),
-    .kantong-table td:nth-child(1) { width: 14%; }
+    /* Lebar kolom proportional (%) - total 100% */
+    /* Mode tanpa Perawat (View Proses biasa - 10 kolom) */
+    .without-perawat .kantong-table th:nth-child(1),
+    .without-perawat .kantong-table td:nth-child(1) { width: 14%; }  /* No. Kantong */
+    .without-perawat .kantong-table th:nth-child(2),
+    .without-perawat .kantong-table td:nth-child(2) { width: 6%; }   /* Gol. Darah */
+    .without-perawat .kantong-table th:nth-child(3),
+    .without-perawat .kantong-table td:nth-child(3) { width: 12%; }  /* Exp Date */
+    .without-perawat .kantong-table th:nth-child(4),
+    .without-perawat .kantong-table td:nth-child(4) { width: 13%; }  /* Tgl. Input */
+    .without-perawat .kantong-table th:nth-child(5),
+    .without-perawat .kantong-table td:nth-child(5) { width: 6%; }   /* Volume */
+    .without-perawat .kantong-table th:nth-child(6),
+    .without-perawat .kantong-table td:nth-child(6) { width: 8%; }   /* MAYOR */
+    .without-perawat .kantong-table th:nth-child(7),
+    .without-perawat .kantong-table td:nth-child(7) { width: 8%; }   /* MINOR */
+    .without-perawat .kantong-table th:nth-child(8),
+    .without-perawat .kantong-table td:nth-child(8) { width: 12%; }  /* Tgl. Serah */
+    .without-perawat .kantong-table th:nth-child(9),
+    .without-perawat .kantong-table td:nth-child(9) { width: 10%; }  /* Petugas Serah */
+    .without-perawat .kantong-table th:nth-child(10),
+    .without-perawat .kantong-table td:nth-child(10) { width: 11%; } /* Petugas Terima */
 
-    .kantong-table th:nth-child(2),
-    .kantong-table td:nth-child(2) { width: 5%; }
-
-    .kantong-table th:nth-child(3),
-    .kantong-table td:nth-child(3) { width: 12%; }
-
-    .kantong-table th:nth-child(4),
-    .kantong-table td:nth-child(4) { width: 15%; }
-
-    .kantong-table th:nth-child(5),
-    .kantong-table td:nth-child(5) { width: 6%; }
-
-    .kantong-table th:nth-child(6),
-    .kantong-table td:nth-child(6) { width: 8%; }
-
-    .kantong-table th:nth-child(7),
-    .kantong-table td:nth-child(7) { width: 8%; }
-
-    .kantong-table th:nth-child(8),
-    .kantong-table td:nth-child(8) { width: 16%; }
-
-    .kantong-table th:nth-child(9),
-    .kantong-table td:nth-child(9) { width: 7%; }
-
-    .kantong-table th:nth-child(10),
-    .kantong-table td:nth-child(10) { width: 7%; }
+    /* Mode dengan Perawat (View Proses Rawat Inap - 11 kolom) */
+    .with-perawat .kantong-table th:nth-child(1),
+    .with-perawat .kantong-table td:nth-child(1) { width: 12%; }  /* No. Kantong */
+    .with-perawat .kantong-table th:nth-child(2),
+    .with-perawat .kantong-table td:nth-child(2) { width: 5%; }   /* Gol. Darah */
+    .with-perawat .kantong-table th:nth-child(3),
+    .with-perawat .kantong-table td:nth-child(3) { width: 10%; }  /* Exp Date */
+    .with-perawat .kantong-table th:nth-child(4),
+    .with-perawat .kantong-table td:nth-child(4) { width: 12%; }  /* Tgl. Input */
+    .with-perawat .kantong-table th:nth-child(5),
+    .with-perawat .kantong-table td:nth-child(5) { width: 6%; }   /* Volume */
+    .with-perawat .kantong-table th:nth-child(6),
+    .with-perawat .kantong-table td:nth-child(6) { width: 8%; }   /* MAYOR */
+    .with-perawat .kantong-table th:nth-child(7),
+    .with-perawat .kantong-table td:nth-child(7) { width: 8%; }   /* MINOR */
+    .with-perawat .kantong-table th:nth-child(8),
+    .with-perawat .kantong-table td:nth-child(8) { width: 12%; }  /* Tgl. Serah */
+    .with-perawat .kantong-table th:nth-child(9),
+    .with-perawat .kantong-table td:nth-child(9) { width: 9%; }   /* Petugas Serah */
+    .with-perawat .kantong-table th:nth-child(10),
+    .with-perawat .kantong-table td:nth-child(10) { width: 9%; }  /* Petugas Terima */
+    .with-perawat .kantong-table th:nth-child(11),
+    .with-perawat .kantong-table td:nth-child(11) { width: 9%; }  /* Perawat */
     /* Tombol */
     .form-darah-native .form-action {
         margin-top: 15px;
@@ -694,7 +718,7 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
                        id="riwayattrans"
                        class="form-control"
                        value="<?php echo htmlspecialchars($d['riwayattrans'] ?? ''); ?>"
-                       placeholder="Riwayat Alergi Transfusi dan Catatan">
+                       placeholder="Riwayat Alergi Transfusi dan Catatan"<?php echo $is_limited ? ' readonly' : ''; ?>>
             </div>
             <div class="col-md-2">
                 <div class="form-check">
@@ -751,7 +775,7 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
         <div class="native-section-title d-flex align-items-center justify-content-between">
             <span>DATA KANTONG DARAH</span>
         </div>
-        <div class="kantong-table-wrapper">
+        <div class="kantong-table-wrapper table-responsive <?php echo $is_limited ? 'with-perawat' : 'without-perawat'; ?>">
             <table class="kantong-table">
                 <thead>
                     <tr>
@@ -765,6 +789,7 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
                         <th>Tgl. Serah</th>
                         <th>Petugas Serah</th>
                         <th>Petugas Terima</th>
+                        <?php if ($is_limited): ?><th>Perawat</th><?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -773,6 +798,7 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
                         $serah_key  = ($i === 1) ? 'PETUGAS_SERAH'  : 'PETUGAS_SERAH_' . $i;
                         $terima_key = ($i === 1) ? 'PETUGAS_TERIMA' : 'PETUGAS_TERIMA_' . $i;
                         $tgl_serah_key = ($i === 1) ? 'TGL_SERAH' : 'TGL_SERAH' . $i;
+                        $perawat_key = ($i === 1) ? 'PERAWAT_TERIMA' : 'PERAWAT_TERIMA_' . $i;
                         ?>
                         <tr>
                             <td>
@@ -823,18 +849,25 @@ $initSize   = ($selectedGolId === '13') ? '2rem' : '3rem';
                             <td>
                                 <input type="text" name="tgl_serah_<?php echo $i; ?>" id="tgl_serah_<?php echo $i; ?>"
                                        class="form-control form-control-sm datetimepicker" placeholder="Tgl. Serah"
-                                       value="<?php echo htmlspecialchars($d['TGL_SERAH' . ($i === 1 ? '' : $i)] ?? ''); ?>"<?php echo $ro; ?>>
+                                       value="<?php echo htmlspecialchars($d['TGL_SERAH' . ($i === 1 ? '' : $i)] ?? ''); ?>">
                             </td>
                             <td>
                                 <input type="text" name="petugas_serah_<?php echo $i; ?>" id="petugas_serah_<?php echo $i; ?>"
                                        class="form-control form-control-sm" placeholder="Serah - Petugas"
-                                       value="<?php echo htmlspecialchars($d['PETUGAS_SERAH' . ($i === 1 ? '' : '_' . $i)] ?? ''); ?>"<?php echo $ro; ?>>
+                                       value="<?php echo htmlspecialchars($d['PETUGAS_SERAH' . ($i === 1 ? '' : '_' . $i)] ?? ''); ?>">
                             </td>
                             <td>
                                 <input type="text" name="petugas_terima_<?php echo $i; ?>" id="petugas_terima_<?php echo $i; ?>"
                                        class="form-control form-control-sm" placeholder="Terima - Petugas"
-                                       value="<?php echo htmlspecialchars($d['PETUGAS_TERIMA' . ($i === 1 ? '' : '_' . $i)] ?? ''); ?>"<?php echo $ro; ?>>
+                                       value="<?php echo htmlspecialchars($d['PETUGAS_TERIMA' . ($i === 1 ? '' : '_' . $i)] ?? ''); ?>">
                             </td>
+                            <?php if ($is_limited): ?>
+                            <td>
+                                <input type="text" name="perawat_edit_<?php echo $i; ?>" id="perawat_edit_<?php echo $i; ?>"
+                                       class="form-control form-control-sm" placeholder="Perawat"
+                                       value="<?php echo htmlspecialchars($d[$perawat_key] ?? ''); ?>">
+                            </td>
+<?php endif; ?>
                         </tr>
                     <?php endfor; ?>
                 </tbody>
@@ -865,7 +898,7 @@ window.REQUEST_EDIT_CONFIG = {
     editMode:    "<?php echo htmlspecialchars($edit_mode); ?>"
 };
 </script>
-<script src="<?php echo base_url('assets/js/request-edit.js'); ?>" defer></script>
+<script src="<?php echo base_url('assets/js/request-edit.js?v=20261014'); ?>" defer></script>
 
 <?php else: ?>
 <div class="card">

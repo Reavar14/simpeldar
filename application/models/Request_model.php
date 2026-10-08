@@ -644,6 +644,33 @@ SQL;
     }
 
     /**
+     * Get perawat_terima data for a no_permintaan
+     */
+    public function get_perawat_terima($no_permintaan)
+    {
+        $sql = "SELECT * FROM darah.perawat_terima WHERE NO_PERMINTAAN = ? LIMIT 1";
+        return $this->db->query($sql, array($no_permintaan))->row_array();
+    }
+
+    /**
+     * Save perawat_terima data (insert or update)
+     */
+    public function save_perawat_terima($no_permintaan, $data)
+    {
+        $exists = $this->db->where('NO_PERMINTAAN', $no_permintaan)
+                           ->count_all_results('darah.perawat_terima');
+
+        $data['NO_PERMINTAAN'] = $no_permintaan;
+
+        if ($exists > 0) {
+            $this->db->where('NO_PERMINTAAN', $no_permintaan);
+            return $this->db->update('darah.perawat_terima', $data);
+        }
+
+        return $this->db->insert('darah.perawat_terima', $data);
+    }
+
+    /**
      * Upsert kantong_luar
      * Native: UPDATE lalu cek mysqli_affected_rows==0 untuk INSERT.
      * Diubah jadi check existence via SELECT untuk hindari insert duplikat

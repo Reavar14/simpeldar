@@ -4,7 +4,7 @@ $level = $CI->session->userdata('level');
 ?>
 
 <style>
-    /* TABEL */
+    /* TABEL - Responsive */
     #tabelRawatInap {
         width: 100% !important;
         table-layout: fixed !important;
@@ -18,6 +18,9 @@ $level = $CI->session->userdata('level');
     #tabelRawatInap td {
         box-sizing: border-box !important;
         border: 1px solid #dee2e6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     /* HEADER */
@@ -25,44 +28,37 @@ $level = $CI->session->userdata('level');
         padding: 7px 4px !important;
         text-align: center !important;
         vertical-align: middle !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        hyphens: none !important;
+        white-space: nowrap !important;
         font-size: 10px !important;
         font-weight: 600 !important;
         line-height: 1.25 !important;
         border: 1px solid #dee2e6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* ISI */
     #tabelRawatInap tbody td {
         padding: 7px 4px !important;
         vertical-align: middle !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: break-word !important;
+        white-space: nowrap !important;
         line-height: 1.35 !important;
         border: 1px solid #dee2e6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* 1. NOMOR */
     #tabelRawatInap th:nth-child(1),
     #tabelRawatInap td:nth-child(1) {
-        width: 110px !important;
-        min-width: 110px !important;
-        max-width: 110px !important;
-        white-space: nowrap !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
+        width: 8% !important;
         text-align: center !important;
     }
     /* 2. NO. MR */
     #tabelRawatInap th:nth-child(2),
     #tabelRawatInap td:nth-child(2) {
-        width: 6% !important;
-        white-space: nowrap !important;
-        word-break: normal !important;
+        width: 8% !important;
+        text-align: center !important;
     }
     /* 3. NAMA PASIEN */
     #tabelRawatInap th:nth-child(3),
@@ -72,7 +68,8 @@ $level = $CI->session->userdata('level');
     /* 4. TGL PERMINTAAN */
     #tabelRawatInap th:nth-child(4),
     #tabelRawatInap td:nth-child(4) {
-        width: 7% !important;
+        width: 8% !important;
+        text-align: center !important;
     }
     /* 5. RUANGAN */
     #tabelRawatInap th:nth-child(5),
@@ -88,43 +85,45 @@ $level = $CI->session->userdata('level');
     #tabelRawatInap th:nth-child(7),
     #tabelRawatInap td:nth-child(7) {
         width: 8% !important;
+        text-align: center !important;
     }
     /* 8. GOL. DARAH */
     #tabelRawatInap th:nth-child(8),
     #tabelRawatInap td:nth-child(8) {
-        width: 120px !important;
-        min-width: 120px !important;
-        max-width: 120px !important;
+        width: 8% !important;
         text-align: center !important;
     }
     /* 9. TGL DIPERLUKAN */
     #tabelRawatInap th:nth-child(9),
     #tabelRawatInap td:nth-child(9) {
-        width: 7% !important;
+        width: 8% !important;
+        text-align: center !important;
     }
     /* 10. STATUS */
     #tabelRawatInap th:nth-child(10),
     #tabelRawatInap td:nth-child(10) {
         width: 12% !important;
+        white-space: normal !important;
+        word-break: normal !important;
+        line-height: 1.3 !important;
     }
     /* 11. KELENGKAPAN */
     #tabelRawatInap th:nth-child(11),
     #tabelRawatInap td:nth-child(11) {
         width: 8% !important;
+        white-space: normal !important;
+        word-break: normal !important;
+        line-height: 1.3 !important;
     }
     /* 12. OPSI */
     #tabelRawatInap th:nth-child(12),
     #tabelRawatInap td:nth-child(12) {
-        width: 55px !important;
-        min-width: 55px !important;
-        max-width: 55px !important;
-        white-space: nowrap !important;
+        width: 8% !important;
         text-align: center !important;
     }
     /* TANGGAL */
     #tabelRawatInap td:nth-child(4),
     #tabelRawatInap td:nth-child(9) {
-        white-space: nowrap !important;
         font-size: 11px !important;
     }
     /* ALIGNMENT */
@@ -152,7 +151,7 @@ $level = $CI->session->userdata('level');
     #tabelRawatInap .btn-group i {
         font-size: 11px !important;
     }
-    /* HORIZONTAL SCROLL - DISABLE */
+    /* DISABLE HORIZONTAL SCROLL */
     .table-responsive {
         overflow-x: hidden !important;
     }
@@ -163,19 +162,12 @@ $level = $CI->session->userdata('level');
     .dataTables_scroll {
         overflow: hidden !important;
     }
-
-    /* STATUS and KELENGKAPAN columns - plain text, wrap enabled */
-    #tabelRawatInap td:nth-child(10),
-    #tabelRawatInap td:nth-child(11) {
-        min-width: 170px !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        line-height: 1.3 !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-    }
-    #tabelRawatInap td:nth-child(11) {
-        min-width: 130px !important;
+    /* Form controls inside table */
+    #tabelRawatInap .form-control,
+    #tabelRawatInap .form-select {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 </style>
 

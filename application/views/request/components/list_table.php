@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
 <style>
-    /* TABEL */
+    /* TABEL - Responsive */
     #tabelPermintaan {
         width: 100% !important;
         table-layout: fixed !important;
@@ -15,6 +15,9 @@
     #tabelPermintaan td {
         box-sizing: border-box !important;
         border: 1px solid #dee2e6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     /* HEADER */
@@ -22,109 +25,102 @@
         padding: 7px 4px !important;
         text-align: center !important;
         vertical-align: middle !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        hyphens: none !important;
+        white-space: nowrap !important;
         font-size: 10px !important;
         font-weight: 600 !important;
         line-height: 1.25 !important;
         border: 1px solid #dee2e6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* ISI */
     #tabelPermintaan tbody td {
         padding: 7px 4px !important;
         vertical-align: middle !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: break-word !important;
+        white-space: nowrap !important;
         line-height: 1.35 !important;
         border: 1px solid #dee2e6 !important;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    /* 1. NOMOR 1 BARIS */
+    /* 1. NOMOR */
     #tabelPermintaan th:nth-child(1),
     #tabelPermintaan td:nth-child(1) {
-        width: 9% !important;
-
-        white-space: nowrap !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
+        width: 7% !important;
+        text-align: center !important;
     }
     /* 2. NOMOR MR */
     #tabelPermintaan th:nth-child(2),
     #tabelPermintaan td:nth-child(2) {
         width: 7% !important;
-        white-space: nowrap !important;
-        word-break: normal !important;
+        text-align: center !important;
     }
-
     /* 3. NAMA PASIEN */
     #tabelPermintaan th:nth-child(3),
     #tabelPermintaan td:nth-child(3) {
-        width: 9% !important;
+        width: 10% !important;
     }
     /* 4. TGL PERMINTAAN */
     #tabelPermintaan th:nth-child(4),
     #tabelPermintaan td:nth-child(4) {
         width: 8% !important;
+        text-align: center !important;
     }
     /* 5. RUANGAN */
     #tabelPermintaan th:nth-child(5),
     #tabelPermintaan td:nth-child(5) {
-        width: 7% !important;
+        width: 8% !important;
     }
     /* 6. ALASAN */
     #tabelPermintaan th:nth-child(6),
     #tabelPermintaan td:nth-child(6) {
-        width: 6% !important;
+        width: 8% !important;
     }
     /* 7. TUJUAN */
     #tabelPermintaan th:nth-child(7),
     #tabelPermintaan td:nth-child(7) {
-        width: 6% !important;
+        width: 8% !important;
     }
     /* 8. GOL DARAH */
     #tabelPermintaan th:nth-child(8),
     #tabelPermintaan td:nth-child(8) {
-        width: 140px !important;
-        min-width: 140px !important;
-        max-width: 140px !important;
+        width: 8% !important;
         text-align: center !important;
-        white-space: nowrap !important;
     }
     /* 9. TGL DIPERLUKAN */
     #tabelPermintaan th:nth-child(9),
     #tabelPermintaan td:nth-child(9) {
         width: 8% !important;
+        text-align: center !important;
     }
     /* 10. JENIS PERMINTAAN */
     #tabelPermintaan th:nth-child(10),
     #tabelPermintaan td:nth-child(10) {
-        width: 9% !important;
+        width: 8% !important;
     }
     /* 11. STATUS */
     #tabelPermintaan th:nth-child(11),
     #tabelPermintaan td:nth-child(11) {
         width: 7% !important;
+        text-align: center !important;
     }
     /* 12. KELENGKAPAN */
     #tabelPermintaan th:nth-child(12),
     #tabelPermintaan td:nth-child(12) {
-        width: 9% !important;
+        width: 7% !important;
+        text-align: center !important;
     }
     /* 13. OPSI */
     #tabelPermintaan th:nth-child(13),
     #tabelPermintaan td:nth-child(13) {
-        width: 11% !important;
-        white-space: nowrap !important;
+        width: 8% !important;
         text-align: center !important;
     }
     /* TANGGAL */
     #tabelPermintaan td:nth-child(4),
     #tabelPermintaan td:nth-child(9) {
-        white-space: nowrap !important;
         font-size: 11px !important;
     }
     /* ALIGNMENT */
@@ -163,7 +159,7 @@
         min-width: 110px !important;
         border-radius: .375rem !important;
     }
-    /* HORIZONTAL SCROLL */
+    /* DISABLE HORIZONTAL SCROLL */
     .table-responsive {
         overflow-x: hidden !important;
     }
@@ -173,6 +169,13 @@
     }
     .dataTables_scroll {
         overflow: hidden !important;
+    }
+    /* Form controls inside table */
+    #tabelPermintaan .form-control,
+    #tabelPermintaan .form-select {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
     }
 </style>
 

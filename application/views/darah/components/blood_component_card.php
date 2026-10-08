@@ -6,7 +6,7 @@
         DATA KANTONG DARAH
     </span>
 </div>
-<div class="kantong-table-wrapper">
+<div class="kantong-table-wrapper table-responsive">
     <table class="kantong-table">
         <thead>
             <tr>
